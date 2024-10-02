@@ -1,0 +1,66 @@
+/* src/components/BusinessOpportunityForm.css */
+
+.form-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #5cc6d0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: black;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-field {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #001C38;
+    display: block; /* Ensures label is on its own line */
+  }
+  
+  input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 97%;
+  }
+  
+  button {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    width: 100px;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .message {
+    margin-top: 10px;
+    text-align: center;
+    color: green;
+  }
+  .message-container h1 {
+    margin-bottom: 20px;
+    color: #001C38;
+    font-size: 15px;
+    font-weight: 100;
+    
+  }
