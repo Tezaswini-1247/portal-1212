@@ -13,6 +13,7 @@ const TutorLoginform = () => {
     batchId: "",
     countryLocation: "",
     tutorId: "",
+    tutorDetails: "",
     phone: "",
     startDate: "",
   };
@@ -22,6 +23,7 @@ const TutorLoginform = () => {
     batchId: Yup.string().required("Batch ID is required"),
     countryLocation: Yup.string().required("Country Location is required"),
     tutorId: Yup.string().required("Tutor ID/Name is required"),
+    tutorDetails: Yup.string().required("Tutor Subject required"),
     phone: Yup.string()
       .required("Phone Number is required")
       .matches(/^[0-9]+$/, "Phone Number must be numeric")
@@ -77,6 +79,20 @@ const TutorLoginform = () => {
                       />
                       <ErrorMessage
                         name="batchId"
+                        component="div"
+                        className="error-message text-[red] text-sm ms-2"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Field
+                        name="tutorDetails"
+                        id="tutorDetails"
+                        type="text"
+                        class="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                        placeholder="Tutor Subject"
+                      />
+                      <ErrorMessage
+                        name="tutorDetails"
                         component="div"
                         className="error-message text-[red] text-sm ms-2"
                       />

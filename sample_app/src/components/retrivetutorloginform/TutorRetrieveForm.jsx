@@ -97,6 +97,7 @@ const TutorRetrieveForm = () => {
                   >
                     <option value="">--Select Field--</option>
                     <option value="batchId">Batch ID</option>
+                    <option value="tutorDetails">TutorSubject</option>
                     <option value="countryLocation">Country Location</option>
                     <option value="tutorId">Tutor ID/Name</option>
                     <option value="phone">Phone Number</option>
@@ -126,6 +127,9 @@ const TutorRetrieveForm = () => {
                 <th className="px-6 py-3 text-start cursor-pointer" onClick={() => requestSort("batchid")}>
                   Batch ID {sortIcon}
                 </th>
+                <th className="px-6 py-3 text-start cursor-pointer" onClick={() => requestSort("tutordetails")}>
+                  Tutor Subject {sortIcon}
+                </th>
                 <th className="px-6 py-3 text-start cursor-pointer" onClick={() => requestSort("countrylocation")}>
                   Country Location {sortIcon}
                 </th>
@@ -148,6 +152,15 @@ const TutorRetrieveForm = () => {
                       <div className="px-6 py-2">
                         <span className="inline-flex items-center gap-1.5 py-1 px-2 rounded-lg text-md font-medium text-gray-800">
                           {row.batchid}
+                        </span>
+                      </div>
+                    </a>
+                  </td>
+                  <td className="size-px whitespace-nowrap">
+                    <a className="block relative z-10">
+                      <div className="px-6 py-2">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-2 rounded-lg text-md font-medium text-gray-800">
+                          {row.tutordetails}
                         </span>
                       </div>
                     </a>

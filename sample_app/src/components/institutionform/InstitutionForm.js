@@ -19,6 +19,8 @@ export function InstitutionForm() {
     numberOfStudents: "",
     response: "",
     datetime: "",
+    photo: null, 
+    description: ""  
   };
 
   const [showAlert, setShowAlert] = useState(false);
@@ -36,6 +38,8 @@ export function InstitutionForm() {
     numberOfStudents: Yup.number().required("Number of Students is required"),
     response: Yup.string().required("Response is required"),
     datetime: Yup.string().required("Date & Time is required"),
+    photo: Yup.mixed().required("Photo is required"),
+    description: Yup.string().max(500, "Description cannot exceed 500 characters")
   });
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
@@ -73,7 +77,7 @@ export function InstitutionForm() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, status }) => (
+          {({ isSubmitting,setFieldValue, status }) => (
             <Form>
               <div className="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
                 <div className="space-y-3">
@@ -172,6 +176,17 @@ export function InstitutionForm() {
                     </Field>
                     <ErrorMessage name="response" component="div" className="text-[red] text-sm" />
                   </div>
+                  {/* Description Field */}
+                  <div className="w-full">
+                    <Field
+                      name="description"
+                      as="textarea"
+                      rows="4"
+                      className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                      placeholder="Description or Comments"
+                    />
+                    <ErrorMessage name="description" component="div" className="text-[red] text-sm" />
+                  </div>
 
                   <div className="w-full">
                     <Field
@@ -180,6 +195,22 @@ export function InstitutionForm() {
                       className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500"
                     />
                     <ErrorMessage name="datetime" component="div" className="text-[red] text-sm" />
+                  </div>
+
+                   {/* Photo Upload Field */}
+                   <div className="w-full">
+                    <label htmlFor="photo">Upload Photo</label>
+                    <input
+                      id="photo"
+                      name="photo"
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        setFieldValue("photo", event.target.files[0]);
+                      }}
+                      className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <ErrorMessage name="photo" component="div" className="text-[red] text-sm" />
                   </div>
                 </div>
               </div>

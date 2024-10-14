@@ -8,11 +8,13 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const FollowupForm = () => {
   const initialValues = {
     studentName: "",
+    followupBy: "",
     collegeName: "",
     phoneNumber: "",
     followupNumber: "1",
     description: "",
     acceptancePercentage: 0,
+    startDate: '',
   };
 
   const [showAlert, setShowAlert] = useState(false);
@@ -21,14 +23,17 @@ const FollowupForm = () => {
     studentName: Yup.string()
       .min(2, "Must be at least 2 characters")
       .required("Student Name is required"),
+    followupBy: Yup.string().required("Name is required"),
     collegeName: Yup.string().required("College/School Name is required"),
     phoneNumber: Yup.string().required("Phone Number is required"),
     followupNumber: Yup.string().required("Follow-up Number is required"),
     description: Yup.string().required("Description is required"),
+    startDate: Yup.string().required("Followup start date is required"),
     acceptancePercentage: Yup.number()
       .min(0, "Acceptance percentage must be at least 0")
       .max(100, "Acceptance percentage cannot exceed 100")
       .required("Acceptance Percentage is required"),
+    
   });
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
@@ -87,6 +92,19 @@ const FollowupForm = () => {
                   </div>
                   <div className="w-full">
                     <Field
+                      name="followupBy"
+                      type="text"
+                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                      placeholder="Followup By "
+                    />
+                    <ErrorMessage
+                      name="followupBy"
+                      component="div"
+                      className="error-message text-[red] text-sm ms-2"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field
                       name="collegeName"
                       type="text"
                       className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
@@ -94,6 +112,19 @@ const FollowupForm = () => {
                     />
                     <ErrorMessage
                       name="collegeName"
+                      component="div"
+                      className="error-message text-[red] text-sm ms-2"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field
+                      name="startDate"
+                      type="date"
+                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                      placeholder="Student Name"
+                    />
+                    <ErrorMessage
+                      name="startDate"
                       component="div"
                       className="error-message text-[red] text-sm ms-2"
                     />
@@ -114,15 +145,7 @@ const FollowupForm = () => {
                   <div className="w-full">
                     <Field as="select" name="followupNumber" className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                       <option value="1">1st Follow-up</option>
-                      <option value="2">2nd Follow-up</option>
-                      <option value="3">3rd Follow-up</option>
-                      <option value="4">4th Follow-up</option>
-                      <option value="5">5th Follow-up</option>
-                      <option value="6">6th Follow-up</option>
-                      <option value="7">7th Follow-up</option>
-                      <option value="8">8th Follow-up</option>
-                      <option value="9">9th Follow-up</option>
-                      <option value="10">10th Follow-up</option>
+                      
                     </Field>
                     <ErrorMessage
                       name="followupNumber"

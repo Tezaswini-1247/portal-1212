@@ -19,9 +19,9 @@ function Alert() {
             </svg>
 
             <div class="grow">
-              <h2 class="text-lg font-semibold text-gray-800">Yuppy!</h2>
+              
               <p class="text-sm text-gray-600">
-                You are sucessfully updated...
+                Data Submitted Successfully
               </p>
             </div>
           </div>

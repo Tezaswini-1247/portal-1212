@@ -11,8 +11,8 @@ const PaymentForm = () => {
     studentName: "",
     phoneNumber: "",
     paymentType: "single",
-    installmentsRequired: "1",
-    installmentsDone: "0",
+    installmentsRequired: " ",
+    installmentsDone: " ",
   };
 
   const [showAlert, setShowAlert] = useState(false);

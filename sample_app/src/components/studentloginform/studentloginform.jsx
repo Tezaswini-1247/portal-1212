@@ -164,6 +164,8 @@ export function Studentloginform() {
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                   <div className="w-full">
+                    <p class="text-sm text-gray-600">            </p>
+                    <p class="text-sm text-gray-600"> Enter Today Date:</p>
                     <Field
                       name="date"
                       type="date"
@@ -177,6 +179,8 @@ export function Studentloginform() {
                     />
                   </div>
                   <div className="w-full">
+                    <p class="text-sm text-gray-600">            </p>
+                    <p class="text-sm text-gray-600">Enter Class Date:</p>
                     <Field
                       name="classDate"
                       type="date"

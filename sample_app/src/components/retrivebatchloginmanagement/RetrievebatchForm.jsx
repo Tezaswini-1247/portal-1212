@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-const apiUrl = process.env.REACT_APP_API_URL;
-
 
 
 function RetrieveBatchLoginForm() {
@@ -18,7 +16,7 @@ function RetrieveBatchLoginForm() {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get(`${apiUrl}/api/batches`);
+      const response = await axios.get("http://localhost:5000/api/batches");
       if (Array.isArray(response.data)) {
         setBatches(response.data);
       } else {
@@ -42,6 +40,7 @@ function RetrieveBatchLoginForm() {
 
     return (
       batch.student_name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      batch.select_subject?.toLowerCase().includes(filterText.toLowerCase()) ||
       batch.batch_id?.toLowerCase().includes(filterText.toLowerCase()) ||
       batch.student_email?.toLowerCase().includes(filterText.toLowerCase()) ||
       batch.next_class_date?.toLowerCase().includes(filterText.toLowerCase())
@@ -181,6 +180,14 @@ function RetrieveBatchLoginForm() {
                   scope="col"
                   class="px-6 py-3 text-center"
                   style={{ cursor: "pointer" }}
+                  onClick={() => handleSort("subject_name")}
+                >
+                  Subject Name {sortIcon("student_name")}
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-center"
+                  style={{ cursor: "pointer" }}
                   onClick={() => handleSort("batch_id")}
                 >
                   Batch ID {sortIcon("batch_id")}
@@ -220,6 +227,15 @@ function RetrieveBatchLoginForm() {
                       <div class="px-6 py-2">
                         <span class="inline-flex items-center gap-1.5 py-1 px-2 rounded-lg text-md font-medium text-gray-800">
                           {batch.batch_id}
+                        </span>
+                      </div>
+                    </a>
+                  </td>
+                  <td class="size-px whitespace-nowrap">
+                    <a class="block relative z-10">
+                      <div class="px-6 py-2">
+                        <span class="inline-flex items-center gap-1.5 py-1 px-2 rounded-lg text-md font-medium text-gray-800">
+                          {batch.select_subject}
                         </span>
                       </div>
                     </a>

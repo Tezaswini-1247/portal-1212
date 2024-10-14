@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import Alert from "../Alert/Alert";
+import Alert from "../Alert/Alert"; // Assuming you have an Alert component
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const FollowupFormEng = () => {
   const initialValues = {
     studentName: "",
+    followupBy: "",
     collegeName: "",
     phoneNumber: "",
     followupNumber: "1",
     description: "",
     acceptancePercentage: 0,
+    startDate: '',
   };
 
   const [showAlert, setShowAlert] = useState(false);
@@ -21,16 +23,17 @@ const FollowupFormEng = () => {
     studentName: Yup.string()
       .min(2, "Must be at least 2 characters")
       .required("Student Name is required"),
+    followupBy: Yup.string().required("Name is required"),
     collegeName: Yup.string().required("College/School Name is required"),
-    phoneNumber: Yup.string()
-      .matches(/^[0-9]+$/, "Phone number must be digits")
-      .required("Phone Number is required"),
+    phoneNumber: Yup.string().required("Phone Number is required"),
     followupNumber: Yup.string().required("Follow-up Number is required"),
     description: Yup.string().required("Description is required"),
+    startDate: Yup.string().required("Followup start date is required"),
     acceptancePercentage: Yup.number()
-      .min(0, "Must be at least 0")
-      .max(100, "Must be at most 100")
+      .min(0, "Acceptance percentage must be at least 0")
+      .max(100, "Acceptance percentage cannot exceed 100")
       .required("Acceptance Percentage is required"),
+    
   });
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
@@ -61,9 +64,9 @@ const FollowupFormEng = () => {
       <div className="bg-white rounded-xl shadow p-4 sm:p-7">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-           Calling Follow-up Form Engineering
+           calling Follow-up Form ENG
           </h2>
-          <p className="text-sm text-gray-600">Enter your details here!</p>
+          <p className="text-sm text-gray-600">Enter your follow-up details here!</p>
         </div>
         <Formik
           initialValues={initialValues}
@@ -84,7 +87,20 @@ const FollowupFormEng = () => {
                     <ErrorMessage
                       name="studentName"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field
+                      name="followupBy"
+                      type="text"
+                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                      placeholder="Followup By "
+                    />
+                    <ErrorMessage
+                      name="followupBy"
+                      component="div"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                   <div className="w-full">
@@ -97,7 +113,20 @@ const FollowupFormEng = () => {
                     <ErrorMessage
                       name="collegeName"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field
+                      name="startDate"
+                      type="date"
+                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                      placeholder="Student Name"
+                    />
+                    <ErrorMessage
+                      name="startDate"
+                      component="div"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                   <div className="w-full">
@@ -110,30 +139,18 @@ const FollowupFormEng = () => {
                     <ErrorMessage
                       name="phoneNumber"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                   <div className="w-full">
-                    <Field
-                      as="select"
-                      name="followupNumber"
-                      className="mt-3 py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                    >
+                    <Field as="select" name="followupNumber" className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                       <option value="1">1st Follow-up</option>
-                      <option value="2">2nd Follow-up</option>
-                      <option value="3">3rd Follow-up</option>
-                      <option value="4">4th Follow-up</option>
-                      <option value="5">5th Follow-up</option>
-                      <option value="6">6th Follow-up</option>
-                      <option value="7">7th Follow-up</option>
-                      <option value="8">8th Follow-up</option>
-                      <option value="9">9th Follow-up</option>
-                      <option value="10">10th Follow-up</option>
+                      
                     </Field>
                     <ErrorMessage
                       name="followupNumber"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                   <div className="w-full">
@@ -146,7 +163,7 @@ const FollowupFormEng = () => {
                     <ErrorMessage
                       name="description"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                   <div className="w-full">
@@ -154,14 +171,12 @@ const FollowupFormEng = () => {
                       name="acceptancePercentage"
                       type="number"
                       className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Percentage of Acceptance (%)"
-                      min="0"
-                      max="100"
+                      placeholder="Acceptance Percentage (%)"
                     />
                     <ErrorMessage
                       name="acceptancePercentage"
                       component="div"
-                      className="error-message text-red-500 text-sm ms-2"
+                      className="error-message text-[red] text-sm ms-2"
                     />
                   </div>
                 </div>

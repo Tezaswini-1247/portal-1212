@@ -2,6 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Pool } = require("pg");
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+
 
 const app = express();
 const port = 5000;
@@ -92,16 +96,16 @@ app.get("/api/students", async (req, res) => {
 
 // Route to handle form submission
 app.post("/submit", async (req, res) => {
-  const { batchId, countryLocation, tutorId, phone, startDate } = req.body;
+  const { batchId,tutorDetails, countryLocation, tutorId, phone, startDate } = req.body;
 
-  if (!batchId || !countryLocation || !tutorId || !phone || !startDate) {
+  if (!batchId || !tutorDetails || !countryLocation || !tutorId || !phone || !startDate) {
     return res.status(400).json({ error: "All form fields are required" });
   }
 
   try {
     await pool.query(
-      "INSERT INTO tutor_form (batchId, countryLocation, tutorId, phone, startDate) VALUES ($1, $2, $3, $4, $5)",
-      [batchId, countryLocation, tutorId, phone, startDate]
+      "INSERT INTO tutor_form (batchId, tutorDetails, countryLocation, tutorId, phone, startDate) VALUES ($1,$2, $3, $4, $5, $6)",
+      [batchId,tutorDetails, countryLocation, tutorId, phone, startDate]
     );
     res.status(201).json({ message: "Form data submitted successfully" });
   } catch (err) {
@@ -115,7 +119,7 @@ app.get("/retrieve", async (req, res) => {
   const { field, value } = req.query;
 
   // Whitelist the fields that are allowed for querying
-  const validFields = ['batchId', 'countryLocation', 'tutorId', 'phone', 'startDate'];
+  const validFields = ['batchId','tutorDetails', 'countryLocation', 'tutorId', 'phone', 'startDate'];
 
   if (!field || !value) {
     return res.status(400).json({ error: "Both field and value query parameters are required" });
@@ -127,10 +131,8 @@ app.get("/retrieve", async (req, res) => {
 
   try {
     const query = `
-      SELECT batchId, countryLocation, tutorId, phone, 
-      to_char(startDate, 'YYYY-MM-DD') as startDate 
-      FROM tutor_form 
-      WHERE ${field} = $1
+      SELECT * FROM tutor_form 
+      // WHERE ${field} = $1
     `;
     const result = await pool.query(query, [value]);
 
@@ -147,12 +149,12 @@ app.get("/retrieve", async (req, res) => {
 
 // Route to insert new batch data
 app.post("/api/batches", async (req, res) => {
-  const { batchId, nextClassDate, studentName, studentEmail } = req.body;
+  const { batchId, selectSubject, nextClassDate, studentName, studentEmail } = req.body;
 
   try {
     const result = await pool.query(
-      "INSERT INTO batches (batch_id, next_class_date, student_name, student_email) VALUES ($1, $2, $3, $4) RETURNING *",
-      [batchId, nextClassDate, studentName, studentEmail]
+      "INSERT INTO batches (batch_id, select_subject, next_class_date, student_name, student_email) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [batchId, selectSubject, nextClassDate, studentName, studentEmail]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -160,6 +162,7 @@ app.post("/api/batches", async (req, res) => {
     res.status(500).json({ error: "Database insertion error" });
   }
 });
+
 
 // Route to retrieve all batch data
 app.get("/api/batches", async (req, res) => {
@@ -171,6 +174,8 @@ app.get("/api/batches", async (req, res) => {
     res.status(500).json({ error: "Database retrieval error" });
   }
 });
+
+
 
 
 app.post('/api/login', async (req, res) => {
@@ -221,13 +226,13 @@ app.post('/api/business-opportunity', async (req, res) => {
 
 // followup scholl/degree
 app.post('/api/followup/school', async (req, res) => {
-  const { studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage } = req.body;
+  const { studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage, followupBy, startDate } = req.body;
   
   try {
     const result = await pool.query(
-      `INSERT INTO followups (student_name, college_name, phone_number, followup_number, description, acceptance_percentage) 
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage]
+      `INSERT INTO followups (student_name, college_name, phone_number, followup_number, description_1, acceptance_percentage,followup_by,start_date) 
+       VALUES ($1, $2, $3, $4, $5, $6,$7,$8) RETURNING *`,
+      [studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage,followupBy,startDate]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -238,7 +243,6 @@ app.post('/api/followup/school', async (req, res) => {
 });
 
 
-// Example backend endpoint for follow-ups
 app.get('/retrieve-followups', async (req, res) => {
   const { field, value } = req.query;
 
@@ -248,17 +252,29 @@ app.get('/retrieve-followups', async (req, res) => {
   }
 
   try {
-    const validFields = ['student_name', 'college_name', 'phone_number', 'followup_number', 'description', 'acceptance_percentage'];
+    const validFields = ['student_name', 'college_name', 'phone_number', 'followup_number', 'description', 'acceptance_percentage', 'followup_by', 'start_date'];
     if (!validFields.includes(field)) {
       return res.status(400).send('Invalid search field.');
     }
 
-    const query = `SELECT * FROM followups WHERE ${field} ILIKE $1`;
-    const result = await pool.query(query, [`%${value}%`]);
+    let query = '';
+    let queryParams = [];
+
+    if (field === 'start_date') {
+      // Special handling for date field
+      query = `SELECT * FROM followups WHERE ${field} = $1`;  // Exact match for date
+      queryParams = [value];  // Ensure value is in date format YYYY-MM-DD
+    } else {
+      // For text-based fields use ILIKE for case-insensitive search
+      query = `SELECT * FROM followups WHERE ${field} ILIKE $1`;
+      queryParams = [`%${value}%`];
+    }
+
+    const result = await pool.query(query, queryParams);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
-    }
+    } 
 
     res.json(result.rows);
   } catch (error) {
@@ -267,15 +283,17 @@ app.get('/retrieve-followups', async (req, res) => {
   }
 });
 
+
 // followup-engi
+
 app.post('/api/followup/eng', async (req, res) => {
-  const { studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage } = req.body;
+  const { studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage, followupBy, startDate } = req.body;
   
   try {
     const result = await pool.query(
-      `INSERT INTO followups_engineering (student_name, college_name, phone_number, followup_number, description, acceptance_percentage) 
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage]
+      `INSERT INTO followupseng (student_name, college_name, phone_number, followup_number, description_1, acceptance_percentage,followup_by,start_date) 
+       VALUES ($1, $2, $3, $4, $5, $6,$7,$8) RETURNING *`,
+      [studentName, collegeName, phoneNumber, followupNumber, description, acceptancePercentage,followupBy,startDate]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -284,6 +302,8 @@ app.post('/api/followup/eng', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error inserting data' });
   }
 });
+
+
 // feedback form engineering
 app.post('/feedback/school', async (req, res) => {
   const { studentName, fatherDetails, motherDetails, contactNumber, address, schoolname, interestedOnline, demoDate, salesRefName } = req.body;
@@ -323,30 +343,52 @@ app.post('/feedback/eng', async (req, res) => {
 // institutionupdate
 
 
-app.post('/api/institutions', async (req, res) => {
+app.post('/api/institutions', upload.single('photo'), async (req, res) => {
   const {
-      institutionName,
-      contactPerson,
-      phoneNumber,
-      email,
-      city,
-      state,
-      numberOfStudents,
-      response,
-      datetime
+    institutionName,
+    contactPerson,
+    phoneNumber,
+    email,
+    city,
+    state,
+    numberOfStudents,
+    response,
+    description,
+    datetime
+     // New field for comments or description
   } = req.body;
 
+  // Check if the file is present in the request
+  const photoPath = req.file ? req.file.path : null;
+
   try {
-      await pool.query(
-          'INSERT INTO institutions (institution_name, contact_person, phone_number, email, city, state, number_of_students,response, datetime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-          [institutionName, contactPerson, phoneNumber, email, city, state, numberOfStudents,response, datetime]
-      );
-      res.send('Institution data submitted');
+    // Insert the form data, including the description and photoPath, into the database
+    await pool.query(
+      `INSERT INTO institutions (
+        institution_name, 
+        contact_person, 
+        phone_number, 
+        email, 
+        city, 
+        state, 
+        number_of_students, 
+        response, 
+        description,
+        datetime, 
+        photo_path
+        
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [institutionName, contactPerson, phoneNumber, email, city, state, numberOfStudents, response, description, datetime, photoPath]
+    );
+
+    res.send('Institution data, photo, and description submitted successfully');
   } catch (err) {
-      console.error('Error submitting institution data:', err);
-      res.status(500).send('Error submitting institution data');
+    console.error('Error submitting institution data:', err);
+    res.status(500).send('Error submitting institution data');
   }
 });
+
 
 // payments schools
 
@@ -425,36 +467,9 @@ app.get('/api/business-opportunities', async (req, res) => {
   }
 });
 
-// Example backend endpoint for follow-ups
-app.get('/retrieve-followups/school', async (req, res) => {
-  const { field, value } = req.query;
 
-  // Check for missing parameters
-  if (!field || !value) {
-    return res.status(400).send('Missing search parameters.');
-  }
 
-  try {
-    const validFields = ['student_name', 'college_name', 'phone_number', 'followup_number', 'description', 'acceptance_percentage'];
-    if (!validFields.includes(field)) {
-      return res.status(400).send('Invalid search field.');
-    }
 
-    const query = `SELECT * FROM followups WHERE ${field} ILIKE $1`;
-    const result = await pool.query(query, [`%${value}%`]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).send('No matching records found.');
-    }
-
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).send('Server error while retrieving data.');
-  }
-});
-
-// Example backend endpoint for follow-ups
 app.get('/retrieve-followups/eng', async (req, res) => {
   const { field, value } = req.query;
 
@@ -464,13 +479,42 @@ app.get('/retrieve-followups/eng', async (req, res) => {
   }
 
   try {
-    const validFields = ['student_name', 'college_name', 'phone_number', 'followup_number', 'description', 'acceptance_percentage'];
+    const validFields = ['student_name', 'college_name', 'phone_number', 'followup_number', 'description', 'acceptance_percentage', 'followup_by', 'start_date'];
+    
+    // Check if the requested field is valid
     if (!validFields.includes(field)) {
       return res.status(400).send('Invalid search field.');
     }
 
-    const query = `SELECT * FROM followups_engineering WHERE ${field} ILIKE $1`;
-    const result = await pool.query(query, [`%${value}%`]);
+    let query = '';
+    let queryParams = [];
+
+    // Special handling for descriptions
+    if (field === 'description') {
+      query = `
+        SELECT * FROM followupseng 
+        WHERE description_1 ILIKE $1 
+          OR description_2 ILIKE $1 
+          OR description_3 ILIKE $1 
+          OR description_4 ILIKE $1 
+          OR description_5 ILIKE $1 
+          OR description_6 ILIKE $1 
+          OR description_7 ILIKE $1 
+          OR description_8 ILIKE $1 
+          OR description_9 ILIKE $1 
+          OR description_10 ILIKE $1`;
+      queryParams = [`%${value}%`];
+    } else if (field === 'start_date') {
+      // Handle exact match for date field
+      query = `SELECT * FROM followupseng WHERE ${field} = $1`;
+      queryParams = [value];  // Ensure value is in date format YYYY-MM-DD
+    } else {
+      // For other fields, use ILIKE for case-insensitive search
+      query = `SELECT * FROM followupseng WHERE ${field} ILIKE $1`;
+      queryParams = [`%${value}%`];
+    }
+
+    const result = await pool.query(query, queryParams);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
@@ -482,6 +526,8 @@ app.get('/retrieve-followups/eng', async (req, res) => {
     res.status(500).send('Server error while retrieving data.');
   }
 });
+
+
 
 // Endpoint to retrieve institutions
 app.get('/api/institutions/retrieve', async (req, res) => {
@@ -492,7 +538,7 @@ app.get('/api/institutions/retrieve', async (req, res) => {
   }
 
   try {
-    const validFields = ['institution_name', 'contact_person', 'phone_number', 'email', 'city', 'state', 'number_of_students', 'response', 'datetime'];
+    const validFields = ['institution_name', 'contact_person', 'phone_number', 'email', 'city', 'state', 'number_of_students', 'response','description', 'datetime','photo_path'];
     if (!validFields.includes(searchField)) {
       return res.status(400).send('Invalid search field.');
     }
@@ -690,5 +736,175 @@ app.post('/api/servers', async (req, res) => {
   } catch (err) {
       console.error('Error inserting server data:', err);
       res.status(500).send('Error inserting server data');
+  }
+});
+
+app.put('/update/followups/:id', async (req, res) => {
+  const { id } = req.params;
+
+  // Destructure required fields from request body
+  const {
+    student_name,
+    followup_By,
+    start_date,
+    college_name,
+    phone_number,
+    followup_number,
+    description_1,
+    description_2,
+    description_3,
+    description_4,
+    description_5,
+    description_6,
+    description_7,
+    description_8,
+    description_9,
+    description_10,
+    acceptance_percentage,
+  } = req.body;
+
+  // Check if all required fields are provided
+  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined') {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const query = `
+      UPDATE followups
+      SET student_name = $1,
+          college_name = $2,
+          phone_number = $3,
+          followup_number = $4,
+          description_1 = $5,
+          description_2 = $6,
+          description_3 = $7,
+          description_4 = $8,
+          description_5 = $9,
+          description_6 = $10,
+          description_7 = $11,
+          description_8 = $12,
+          description_9 = $13,
+          description_10 = $14,
+          acceptance_percentage = $15,
+          start_date=$16,
+          followup_By=$17,
+      WHERE id = $18
+      RETURNING *;
+    `;
+
+    const values = [
+      student_name,
+      college_name,
+      phone_number,
+      followup_number,
+      description_1,
+      description_2,
+      description_3,
+      description_4,
+      description_5,
+      description_6,
+      description_7,
+      description_8,
+      description_9,
+      description_10,
+      acceptance_percentage,
+      followup_By,
+      start_date,
+      id,
+    ];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No follow-up found with that ID' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating followup:', error);
+    res.status(500).json({ error: 'Failed to update followup' });
+  }
+});
+
+//for eng followup
+app.put('/update/followups/eng/:id', async (req, res) => {
+  const { id } = req.params;
+
+  // Destructure required fields from request body
+  const {
+    student_name,
+    followup_By,   // Correct capitalization
+    start_date,
+    college_name,
+    phone_number,
+    followup_number,
+    description_1,
+    description_2,
+    description_3,
+    description_4,
+    description_5,
+    description_6,
+    description_7,
+    description_8,
+    description_9,
+    description_10,
+    acceptance_percentage,
+  } = req.body;
+
+  // Check if all required fields are provided
+  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined') {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const query = `
+      UPDATE followupseng
+      SET student_name = $1,
+          college_name = $2,
+          phone_number = $3,
+          followup_number = $4,
+          description_1 = $5,
+          description_2 = $6,
+          description_3 = $7,
+          description_4 = $8,
+          description_5 = $9,
+          description_6 = $10,
+          description_7 = $11,
+          description_8 = $12,
+          description_9 = $13,
+          description_10 = $14,
+          followup_by = $15,   -- New fields
+          start_date = $16,    -- New fields
+          acceptance_percentage = $17
+      WHERE id = $18
+      RETURNING *;
+    `;
+
+    const values = [
+      student_name,
+      college_name,
+      phone_number,
+      followup_number,
+      description_1,
+      description_2,
+      description_3,
+      description_4,
+      description_5,
+      description_6,
+      description_7,
+      description_8,
+      description_9,
+      description_10,
+      followup_by,
+      start_date,
+      acceptance_percentage,
+      id
+    ];
+
+    const result = await db.query(query, values);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating followup:', error);
+    res.status(500).json({ error: 'Failed to update follow-up record' });
   }
 });

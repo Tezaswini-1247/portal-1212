@@ -1,6 +1,7 @@
 body{
-    overflow: auto;  
+    overflow: auto !important;    
 }
+
 
 .main-content {
     transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
@@ -15,6 +16,10 @@ body{
 .main-content.resized {
     width: calc(100% - 260px);
     transform: translateX(260px);
+}
+
+.side-content.notresized {
+    width: 0px;
 }
 
 .section-content.resized {
