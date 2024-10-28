@@ -36,7 +36,7 @@ export function BusinessOpportunityForm() {
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/api/business-opportunity`,
+        'http://localhost:5000/api/business-opportunity',
         values
       );
       setStatus("Business opportunity data submitted successfully!");

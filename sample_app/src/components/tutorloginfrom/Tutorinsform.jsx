@@ -36,7 +36,7 @@ const TutorLoginform = () => {
     { resetForm, setSubmitting, setStatus }
   ) => {
     try {
-      const response = await axios.post(`${apiUrl}/submit`, values);
+      const response = await axios.post('http://localhost:5000/submit', values);
       console.log("Form submitted successfully", response.data);
       setStatus("Form submitted successfully!");
       setShowAlert(true);

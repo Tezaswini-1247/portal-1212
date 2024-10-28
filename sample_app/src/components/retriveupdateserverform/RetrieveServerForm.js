@@ -17,7 +17,7 @@ const RetrieveServerForm = () => {
     setServerData(null);
 
     try {
-      const response = await axios.get(`${apiUrl}/api/servers/${serverId}`);
+      const response = await axios.get(`http://localhost:5000/api/servers/${serverId}`);
       setServerData(response.data);
     } catch (err) {
       if (err.response && err.response.status === 404) {

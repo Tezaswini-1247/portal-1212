@@ -21,7 +21,7 @@ const PaymentForm = () => {
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
-      const response = await axios.post(`${apiUrl}/api/payment/eng`, values);
+      const response = await axios.post('http://localhost:5000/api/payment/eng', values);
       console.log("Payment information submitted", response.data);
       setStatus("Payment information submitted successfully!");
       setShowAlert(true);

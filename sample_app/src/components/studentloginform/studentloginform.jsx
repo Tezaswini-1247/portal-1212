@@ -36,7 +36,7 @@ export function Studentloginform() {
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     console.log(values);  
     try {
-      const response = await axios.post(`${apiUrl}/api/student`, values);
+      const response = await axios.post('http://localhost:5000/api/student', values);
       console.log("Form submitted successfully", response.data);
       setStatus("Form submitted successfully!");
       setShowAlert(true);

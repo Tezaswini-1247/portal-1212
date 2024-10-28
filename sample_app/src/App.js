@@ -22,22 +22,22 @@ import RetrieveBusinessOpportunity from "./components/retrivebusinessopportunity
 import BusinessOpportunityForm from "./components/businessopportunity/BusinessOpportunityForm";
 import RetrieveServerForm from "./components/retriveupdateserverform/RetrieveServerForm";
 import Retrivestudentloginform from "./components/retrivestudentloginform/retrivestudentloginform";
-import RetrieveFormComponent from "./components/retriveformcomponent/RetrieveFormComponent";
+import FollowupsAllForm from "./components/Part3ALLforms/ALLFollowups";
 import FollowupForm from "./components/followupform/FollowupForm";
 import PaymentForm from "./components/payment/PaymentForm";
 import RetrievePayments from "./components/retrivepayment/RetrievePayments";
 import Home from "./components/homecomponent/home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import FormComponent from "./components/formcomponent/FormComponent";
+import StudentsAllForm from "./components/part2Allforms/studentAllretrieves";
 import RetrieveFollowups from "./components/retrivefollowupform/RetrieveFollowups";
-import FormComponentEng from "./components/formcomponent-eng/FormComponent-eng";
-import RetrieveFormComponentEng from "./components/retriveformcomponent-eng/RetrieveFormComponent-eng";
+import FollowupsAllFormeng from "./components/part4allreports/engallrecords";
 import RetrieveFollowupsEng from "./components/retrivefollowup-eng/RetrieveFollowups-eng";
 import RetrievePaymentsENG from "./components/retrivepayment-eng/RetrievePayments-eng";
 import FollowupFormENG from "./components/followupform-eng/FollowupForm-eng";
 import PaymentFormENG from "./components/paymentform-eng/PaymentForm-eng";
 import Pages from "./components/pagescomponent/pages";
+import RetrieveAllForm from "./components/integratedRetrieve/integratedRetrieveForm";
 import Contact from "./components/contactcomponent/contact";
 
 function App() {
@@ -436,6 +436,24 @@ function App() {
                                         </p>
                                       </Link>
                                     </li>
+                                    <li className="list-group-item d-flex">
+                                      <Link
+                                        className="dropdown-item"
+                                        to="/retrieve-all-forms"
+                                      >
+                                        <p
+                                          className="p-0"
+                                          style={{ width: "100%" }}
+                                          data-bs-toggle="offcanvas"
+                                          data-bs-target="#offcanvasExample"
+                                          onClick={toggleOffCanvas}
+                                          aria-controls="offcanvasExample"
+                                        >
+                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
+                                          Retrieve All Forms
+                                        </p>
+                                      </Link>
+                                    </li>
                                   </ul>
                                 </div>
                               </div>
@@ -576,6 +594,24 @@ function App() {
                                         </p>
                                       </Link>
                                     </li>
+                                    <li className="list-group-item d-flex">
+                                      <Link
+                                        className="dropdown-item"
+                                        to="/all-student-records"
+                                      >
+                                        <p
+                                          className="p-0"
+                                          style={{ width: "100%" }}
+                                          data-bs-toggle="offcanvas"
+                                          data-bs-target="#offcanvasExample"
+                                          onClick={toggleOffCanvas}
+                                          aria-controls="offcanvasExample"
+                                        >
+                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
+                                          ALL RECORDS
+                                        </p>
+                                      </Link>
+                                    </li>
                                   </ul>
                                 </div>
                               </div>
@@ -611,42 +647,6 @@ function App() {
                               >
                                 <div className="accordion-body text-black p-0">
                                   <ul className="list-group list-group-flush text-sm">
-                                    <li className="list-group-item d-flex">
-                                      <Link
-                                        className="dropdown-item"
-                                        to="/form-component"
-                                      >
-                                        <p
-                                          className="p-0"
-                                          style={{ width: "100%" }}
-                                          data-bs-toggle="offcanvas"
-                                          data-bs-target="#offcanvasExample"
-                                          onClick={toggleOffCanvas}
-                                          aria-controls="offcanvasExample"
-                                        >
-                                          <i className="bi bi-journal-medical pe-2"></i>{" "}
-                                          Form Component
-                                        </p>
-                                      </Link>
-                                    </li>
-                                    <li className="list-group-item d-flex">
-                                      <Link
-                                        className="dropdown-item"
-                                        to="/retrive-form-component"
-                                      >
-                                        <p
-                                          className="p-0"
-                                          style={{ width: "100%" }}
-                                          data-bs-toggle="offcanvas"
-                                          data-bs-target="#offcanvasExample"
-                                          onClick={toggleOffCanvas}
-                                          aria-controls="offcanvasExample"
-                                        >
-                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
-                                          Retrieve Form Component
-                                        </p>
-                                      </Link>
-                                    </li>
                                     <li className="list-group-item d-flex">
                                       <Link
                                         className="dropdown-item"
@@ -719,6 +719,24 @@ function App() {
                                         </p>
                                       </Link>
                                     </li>
+                                    <li className="list-group-item d-flex">
+                                      <Link
+                                        className="dropdown-item"
+                                        to="followups-all-forms"
+                                      >
+                                        <p
+                                          className="p-0"
+                                          style={{ width: "100%" }}
+                                          data-bs-toggle="offcanvas"
+                                          data-bs-target="#offcanvasExample"
+                                          onClick={toggleOffCanvas}
+                                          aria-controls="offcanvasExample"
+                                        >
+                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
+                                          All School/Deg Records
+                                        </p>
+                                      </Link>
+                                    </li>
                                   </ul>
                                 </div>
                               </div>
@@ -751,42 +769,6 @@ function App() {
                               >
                                 <div className="accordion-body text-black p-0">
                                   <ul className="list-group list-group-flush text-sm">
-                                    <li className="list-group-item d-flex">
-                                      <Link
-                                        className="dropdown-item"
-                                        to="/form-ENG"
-                                      >
-                                        <p
-                                          className="p-0"
-                                          style={{ width: "100%" }}
-                                          data-bs-toggle="offcanvas"
-                                          data-bs-target="#offcanvasExample"
-                                          onClick={toggleOffCanvas}
-                                          aria-controls="offcanvasExample"
-                                        >
-                                          <i className="bi bi-journal-medical pe-2"></i>{" "}
-                                          Form Component (ENG)
-                                        </p>
-                                      </Link>
-                                    </li>
-                                    <li className="list-group-item d-flex">
-                                      <Link
-                                        className="dropdown-item"
-                                        to="/retrive-form-ENG"
-                                      >
-                                        <p
-                                          className="p-0"
-                                          style={{ width: "100%" }}
-                                          data-bs-toggle="offcanvas"
-                                          data-bs-target="#offcanvasExample"
-                                          onClick={toggleOffCanvas}
-                                          aria-controls="offcanvasExample"
-                                        >
-                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
-                                          Retrieve Form Component (ENG)
-                                        </p>
-                                      </Link>
-                                    </li>
                                     <li className="list-group-item d-flex">
                                       <Link
                                         className="dropdown-item"
@@ -859,6 +841,24 @@ function App() {
                                         </p>
                                       </Link>
                                     </li>
+                                    <li className="list-group-item d-flex">
+                                      <Link
+                                        className="dropdown-item"
+                                        to="/All-eng-records"
+                                      >
+                                        <p
+                                          className="p-0"
+                                          style={{ width: "100%" }}
+                                          data-bs-toggle="offcanvas"
+                                          data-bs-target="#offcanvasExample"
+                                          onClick={toggleOffCanvas}
+                                          aria-controls="offcanvasExample"
+                                        >
+                                          <i className="bi bi-box-arrow-down pe-2"></i>{" "}
+                                          All Engineering Records
+                                        </p>
+                                      </Link>
+                                    </li>
                                   </ul>
                                 </div>
                               </div>
@@ -889,10 +889,15 @@ function App() {
               element={
                 isLoggedIn ? <RetrieveStudentForm /> : <Navigate to="/" />
               }
+
             />
             <Route
               path="/batch-login"
               element={isLoggedIn ? <BatchLoginForm /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/all-student-records"
+              element={isLoggedIn ? <StudentsAllForm /> : <Navigate to="/" />}
             />
             <Route
               path="/retrieve-batch"
@@ -903,6 +908,10 @@ function App() {
             <Route
               path="/tutor-login-form"
               element={isLoggedIn ? <Tutorinsform /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/All-eng-records"
+              element={isLoggedIn ? <FollowupsAllFormeng /> : <Navigate to="/" />}
             />
             <Route
               path="/retrieve-tutor-form"
@@ -924,6 +933,12 @@ function App() {
               path="/retrieve-server-form"
               element={
                 isLoggedIn ? <RetrieveServerForm /> : <Navigate to="/" />
+              }
+            />
+            <Route
+              path="/retrieve-all-forms"
+              element={
+                isLoggedIn ? <RetrieveAllForm /> : <Navigate to="/" />
               }
             />
             <Route
@@ -954,20 +969,15 @@ function App() {
               path="/tutorins-retrive-form"
               element={isLoggedIn ? <TutorRetrieveForm /> : <Navigate to="/" />}
             />
+           
+            
             <Route
-              path="/form-component"
-              element={isLoggedIn ? <FormComponent /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/retrive-form-component"
+              path="/followups-all-forms"
               element={
-                isLoggedIn ? <RetrieveFormComponent /> : <Navigate to="/" />
+                isLoggedIn ? <FollowupsAllForm /> : <Navigate to="/" />
               }
             />
-            <Route
-              path="/form-component"
-              element={isLoggedIn ? <FormComponent /> : <Navigate to="/" />}
-            />
+            
             <Route
               path="/retrive-followups"
               element={isLoggedIn ? <RetrieveFollowups /> : <Navigate to="/" />}
@@ -981,16 +991,8 @@ function App() {
               element={isLoggedIn ? <PaymentForm /> : <Navigate to="/" />}
             />
 
-            <Route
-              path="/form-ENG"
-              element={isLoggedIn ? <FormComponentEng /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/retrive-form-ENG"
-              element={
-                isLoggedIn ? <RetrieveFormComponentEng /> : <Navigate to="/" />
-              }
-            />
+            
+            
             <Route
               path="/retrive-follups-ENG"
               element={
@@ -998,12 +1000,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/retrive-form-ENG"
-              element={
-                isLoggedIn ? <RetrieveFormComponentEng /> : <Navigate to="/" />
-              }
-            />
+           
             <Route
               path="/retrive-payment-ENG"
               element={

@@ -168,6 +168,9 @@ function RetrieveBatchLoginForm() {
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
+                <th scope="col"
+                  class="px-6 py-3 text-center"
+                  style={{ cursor: "pointer" }}>S.No</th>
                 <th
                   scope="col"
                   class="px-6 py-3 text-center"
@@ -213,6 +216,7 @@ function RetrieveBatchLoginForm() {
             <tbody class="divide-y divide-gray-200">
               {filteredBatches.map((batch, index) => (
                 <tr class="bg-white hover:bg-gray-50" key={index}>
+                  <td>{index+1}</td>
                   <td class="size-px whitespace-nowrap">
                     <a class="block relative z-10">
                       <div class="px-6 py-2">

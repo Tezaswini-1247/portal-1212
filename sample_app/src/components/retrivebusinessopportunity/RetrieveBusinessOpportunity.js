@@ -17,7 +17,7 @@ const RetrieveBusinessOpportunity = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/api/business-opportunities`, {
+      const response = await axios.get('http://localhost:5000/api/business-opportunities', {
         params: { searchField, searchValue }
       });
       setOpportunities(response.data);

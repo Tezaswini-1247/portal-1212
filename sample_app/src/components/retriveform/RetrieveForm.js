@@ -18,7 +18,7 @@ const RetrieveForm = () => {
     setData([]);
 
     try {
-      const response = await axios.get(`${apiUrl}/api/institutions/retrieve`, {
+      const response = await axios.get('http://localhost:5000/api/institutions/retrieve', {
         params: { searchField, searchValue }
       });
 
@@ -79,6 +79,7 @@ const RetrieveForm = () => {
         <table className="result-table">
           <thead>
             <tr>
+              <th>S.No</th>
               <th>Institution Name</th>
               <th>Contact Person</th>
               <th>Phone Number</th>
@@ -92,6 +93,7 @@ const RetrieveForm = () => {
           <tbody>
             {data.map((item, index) => (
               <tr key={index}>
+                <td>{index+1}</td>
                 <td>{item.institution_name}</td>
                 <td>{item.contact_person}</td>
                 <td>{item.phone_number}</td>

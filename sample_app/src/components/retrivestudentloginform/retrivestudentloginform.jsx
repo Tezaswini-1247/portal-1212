@@ -18,7 +18,7 @@ function RetrieveStudentForm() {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get(`${apiUrl}/api/students`);
+      const response = await axios.get('http://localhost:5000/api/students');
       setStudents(response.data.data);
     } catch (err) {
       console.error("Error fetching student data:", err);
@@ -186,6 +186,9 @@ function RetrieveStudentForm() {
         <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
+            <th scope="col"
+              class="px-6 py-3 text-center"
+              style={{ cursor: "pointer" ,textWrap:'nowrap'}}>S.No</th>
             <th
               scope="col"
               class="px-6 py-3 text-center"
@@ -255,6 +258,7 @@ function RetrieveStudentForm() {
         <tbody class="divide-y divide-gray-200">
           {filteredStudents.map((student, index) => (
             <tr class="bg-white hover:bg-gray-50" key={index}>
+              <td class="size-px whitespace-nowrap">{index+1}</td>
               <td class="size-px whitespace-nowrap">
                 <a class="block relative z-10">
                   <div class="px-6 py-2">

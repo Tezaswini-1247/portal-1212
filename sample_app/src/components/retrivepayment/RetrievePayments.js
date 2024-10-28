@@ -15,7 +15,7 @@ const RetrievePayments = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/retrieve-payments/school`, {
+      const response = await axios.get('http://localhost:5000/retrieve-payments/school', {
         params: { field: searchField, value: searchValue },
       });
       setPayments(response.data);
@@ -78,6 +78,7 @@ const RetrievePayments = () => {
         <table>
           <thead>
             <tr>
+              <th>S.No</th>
               <th>Student Name</th>
               <th>Phone Number</th>
               <th>Payment Type</th>
@@ -86,8 +87,9 @@ const RetrievePayments = () => {
             </tr>
           </thead>
           <tbody>
-            {payments.map((payment) => (
+            {payments.map((payment, index) => (
               <tr key={payment.id}>
+                <td>{index+1}</td>
                 <td>{payment.student_name}</td>
                 <td>{payment.phone_number}</td>
                 <td>{payment.payment_type}</td>

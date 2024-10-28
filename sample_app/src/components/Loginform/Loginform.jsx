@@ -15,7 +15,7 @@ const LoginForm = ({ onHandleLogin }) => {
     setError('');
 
     try {
-      const response = await axios.post(`${apiUrl}/api/login`, {
+      const response = await axios.post('http://localhost:5000/api/login', {
         email,
         password,
       });
