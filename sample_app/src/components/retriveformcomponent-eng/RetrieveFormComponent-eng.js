@@ -1,9 +1,7 @@
-// src/components/RetrieveFormComponent.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './retrieveformcomeng.css';
+import './retrieveformcomeng.css'; // Ensure this file exists for styling
 const apiUrl = process.env.REACT_APP_API_URL;
-
 
 const RetrieveFormComponent = () => {
   const [students, setStudents] = useState([]);
@@ -11,14 +9,13 @@ const RetrieveFormComponent = () => {
   const [error, setError] = useState('');
   const [searchField, setSearchField] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [sortField, setSortField] = useState('student_name');
-  const [sortOrder, setSortOrder] = useState('asc');
 
+  // Fetch student data based on search parameters
   const fetchStudents = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/retrieve-parents/eng`, {
+      const response = await axios.get('http://localhost:5000/retrieve/feedback/eng', {
         params: { field: searchField, value: searchValue }
       });
       setStudents(response.data);
@@ -35,37 +32,12 @@ const RetrieveFormComponent = () => {
     fetchStudents();
   };
 
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortIcon = (field) =>
-    sortField === field ? (sortOrder === 'asc' ? '▲' : '▼') : '';
-
-  const formatRetrievedDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
-
-  const sortedStudents = students.sort((a, b) => {
-    if (a[sortField] < b[sortField]) return sortOrder === 'asc' ? -1 : 1;
-    if (a[sortField] > b[sortField]) return sortOrder === 'asc' ? 1 : -1;
-    return 0;
-  });
-
   return (
     <div className="retrieve-container">
-      <h2>Retrieve Feedback Records ENG</h2>
-
-      {/* Search Form */}
-      <div className="retrieve-form">
+      <h2>Retrieve Feedback Records</h2>
+      <div className="search-form">
         <form onSubmit={handleSearch}>
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="searchField">Search Field:</label>
             <select
               id="searchField"
@@ -78,15 +50,19 @@ const RetrieveFormComponent = () => {
               <option value="father_details">Father Name & Profession</option>
               <option value="mother_details">Mother Name & Profession</option>
               <option value="contact_number">Contact Number</option>
+              <option value="student_mobile">Student Mobile</option> {/* New field */}
               <option value="address">Address</option>
-              <option value="school_name">School/College Name</option>
+              <option value="school_name">College Name</option>
+              <option value="course_name">Course Name</option> {/* New field */}
+              <option value="course_year">Course Year</option> {/* New field */}
+              <option value="interested_for">Interested in Courses</option> {/* New field */}
+              <option value="payment_mode">Payment Mode</option> {/* New field */}
               <option value="interested_online">Interested in Online Course</option>
               <option value="demo_date">Demo Date</option>
               <option value="sales_ref_name">Sales Reference Name</option>
             </select>
           </div>
-
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="searchValue">Search Value:</label>
             <input
               type="text"
@@ -96,42 +72,51 @@ const RetrieveFormComponent = () => {
               required
             />
           </div>
-
-          <button className="submit-button" type="submit">Search</button>
+          <div className="button-group">
+            <button type="submit" className="action-button">Search</button>
+          </div>
         </form>
       </div>
 
-      {/* Feedback */}
-      {loading && <p className="loading-message">Loading...</p>}
+      {loading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
 
-      {/* Table */}
       {!loading && !error && students.length > 0 && (
-        <table className="result-table">
+        <table>
           <thead>
             <tr>
-              <th onClick={() => handleSort('student_name')}>Student Name {sortIcon('student_name')}</th>
-              <th onClick={() => handleSort('father_details')}>Father Name & Profession {sortIcon('father_details')}</th>
-              <th onClick={() => handleSort('mother_details')}>Mother Name & Profession {sortIcon('mother_details')}</th>
-              <th onClick={() => handleSort('contact_number')}>Contact Number {sortIcon('contact_number')}</th>
-              <th onClick={() => handleSort('address')}>Residing Address {sortIcon('address')}</th>
-              <th onClick={() => handleSort('school_name')}>School/College Name {sortIcon('school_name')}</th>
-              <th onClick={() => handleSort('interested_online')}>Interested in Online Course {sortIcon('interested_online')}</th>
-              <th onClick={() => handleSort('demo_date')}>Demo Date {sortIcon('demo_date')}</th>
-              <th onClick={() => handleSort('sales_ref_name')}>Sales Reference Name {sortIcon('sales_ref_name')}</th>
+              <th>Name of the Student</th>
+              <th>Father Name & Profession</th>
+              <th>Mother Name & Profession</th>
+              <th>Contact Number</th>
+              <th>Student Mobile</th> {/* New column */}
+              <th>Residing Address</th>
+              <th>School/College Name</th>
+              <th>Course Name</th> {/* New column */}
+              <th>Course Year</th> {/* New column */}
+              <th>Interested in Online Course</th>
+              <th>Interested in Courses</th> {/* New column */}
+              <th>Payment Mode</th> {/* New column */}
+              <th>Demo Date</th>
+              <th>Sales Reference Name</th>
             </tr>
           </thead>
           <tbody>
-            {sortedStudents.map((student) => (
+            {students.map((student) => (
               <tr key={student.id}>
                 <td>{student.student_name}</td>
                 <td>{student.father_details}</td>
                 <td>{student.mother_details}</td>
                 <td>{student.contact_number}</td>
+                <td>{student.student_mobile}</td> {/* New data */}
                 <td>{student.address}</td>
                 <td>{student.school_name}</td>
+                <td>{student.course_name}</td> {/* New data */}
+                <td>{student.course_year}</td> {/* New data */}
                 <td>{student.interested_online ? 'Yes' : 'No'}</td>
-                <td>{formatRetrievedDate(student.demo_date)}</td>
+                <td>{student.interested_for}</td> {/* New data */}
+                <td>{student.payment_mode}</td> {/* New data */}
+                <td>{student.demo_date}</td>
                 <td>{student.sales_ref_name}</td>
               </tr>
             ))}

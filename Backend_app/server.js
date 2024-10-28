@@ -11,6 +11,7 @@ const app = express();
 const port = 5000;
 
 // Middleware
+
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -306,13 +307,43 @@ app.post('/api/followup/eng', async (req, res) => {
 
 // feedback form engineering
 app.post('/feedback/school', async (req, res) => {
-  const { studentName, fatherDetails, motherDetails, contactNumber, address, schoolname, interestedOnline, demoDate, salesRefName } = req.body;
-  
+  const { 
+    studentName, 
+    fatherDetails, 
+    motherDetails, 
+    contactNumber, 
+    studentMobile,  // New field
+    address, 
+    schoolname, 
+    courseName,  // New field
+    courseYear,  // New field
+    interestedFor,  // New field
+    paymentMode,  // New field
+    interestedOnline, 
+    demoDate, 
+    salesRefName 
+  } = req.body;
+
   try {
     const result = await pool.query(
-      `INSERT INTO parents (student_name, father_details, mother_details, contact_number, address, school_name, interested_online, demo_date, sales_ref_name) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      [studentName, fatherDetails, motherDetails, contactNumber, address, schoolname, interestedOnline, demoDate, salesRefName]
+      `INSERT INTO parents (
+        student_name, 
+        father_details, 
+        mother_details, 
+        contact_number, 
+        student_mobile,  
+        address, 
+        school_name, 
+        course_name,  
+        course_year,  
+        interested_for,  
+        payment_mode,  
+        interested_online, 
+        demo_date, 
+        sales_ref_name
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
+      [studentName, fatherDetails, motherDetails, contactNumber, studentMobile, address, schoolname, courseName, courseYear, interestedFor, paymentMode, interestedOnline, demoDate, salesRefName]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -322,15 +353,46 @@ app.post('/feedback/school', async (req, res) => {
   }
 });
 
+
 // feedbackform engineering
 app.post('/feedback/eng', async (req, res) => {
-  const { studentName, fatherDetails, motherDetails, contactNumber, address, schoolname, interestedOnline, demoDate, salesRefName } = req.body;
-  
+  const { 
+    studentName, 
+    fatherDetails, 
+    motherDetails, 
+    contactNumber, 
+    studentMobile,  // New field
+    address, 
+    schoolname, 
+    courseName,  // New field
+    courseYear,  // New field
+    interestedFor,  // New field
+    paymentMode,  // New field
+    interestedOnline, 
+    demoDate, 
+    salesRefName 
+  } = req.body;
+
   try {
     const result = await pool.query(
-      `INSERT INTO parents_engineering (student_name, father_details, mother_details, contact_number, address, school_name, interested_online, demo_date, sales_ref_name) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      [studentName, fatherDetails, motherDetails, contactNumber, address, schoolname, interestedOnline, demoDate, salesRefName]
+      `INSERT INTO parents_engineering (
+        student_name, 
+        father_details, 
+        mother_details, 
+        contact_number, 
+        student_mobile,  
+        address, 
+        school_name, 
+        course_name,  
+        course_year,  
+        interested_for,  
+        payment_mode,  
+        interested_online, 
+        demo_date, 
+        sales_ref_name
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
+      [studentName, fatherDetails, motherDetails, contactNumber, studentMobile, address, schoolname, courseName, courseYear, interestedFor, paymentMode, interestedOnline, demoDate, salesRefName]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -341,8 +403,6 @@ app.post('/feedback/eng', async (req, res) => {
 });
 
 // institutionupdate
-
-
 app.post('/api/institutions', upload.single('photo'), async (req, res) => {
   const {
     institutionName,
@@ -558,7 +618,6 @@ app.get('/api/institutions/retrieve', async (req, res) => {
 });
 
 // retrieve feedbackschools
-
 app.get('/retrieve/feedback/school', async (req, res) => {
   const { field, value } = req.query;
 
@@ -573,8 +632,13 @@ app.get('/retrieve/feedback/school', async (req, res) => {
       'father_details',
       'mother_details',
       'contact_number',
+      'student_mobile', // New field
       'address',
       'school_name',
+      'course_name', // New field
+      'course_year', // New field
+      'interested_for', // New field
+      'payment_mode', // New field
       'interested_online',
       'demo_date',
       'sales_ref_name'
@@ -602,7 +666,8 @@ app.get('/retrieve/feedback/school', async (req, res) => {
 
 // retrieve feedbback eng
 
-app.get('/retrieve-parents/eng', async (req, res) => {
+
+app.get('/retrieve/feedback/eng', async (req, res) => {
   const { field, value } = req.query;
 
   // Check for missing parameters
@@ -616,8 +681,13 @@ app.get('/retrieve-parents/eng', async (req, res) => {
       'father_details',
       'mother_details',
       'contact_number',
+      'student_mobile', // New field
       'address',
       'school_name',
+      'course_name', // New field
+      'course_year', // New field
+      'interested_for', // New field
+      'payment_mode', // New field
       'interested_online',
       'demo_date',
       'sales_ref_name'
@@ -739,13 +809,20 @@ app.post('/api/servers', async (req, res) => {
   }
 });
 
+
+//school
 app.put('/update/followups/:id', async (req, res) => {
   const { id } = req.params;
+  const followupId = parseInt(id, 10);  // Convert to integer
 
-  // Destructure required fields from request body
+  // Check if ID is valid
+  if (isNaN(followupId)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
   const {
     student_name,
-    followup_By,
+    followup_by,
     start_date,
     college_name,
     phone_number,
@@ -763,8 +840,8 @@ app.put('/update/followups/:id', async (req, res) => {
     acceptance_percentage,
   } = req.body;
 
-  // Check if all required fields are provided
-  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined') {
+  // Check for required fields
+  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined' || !start_date) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -786,8 +863,8 @@ app.put('/update/followups/:id', async (req, res) => {
           description_9 = $13,
           description_10 = $14,
           acceptance_percentage = $15,
-          start_date=$16,
-          followup_By=$17,
+          start_date = $16,
+          followup_by = $17
       WHERE id = $18
       RETURNING *;
     `;
@@ -808,9 +885,9 @@ app.put('/update/followups/:id', async (req, res) => {
       description_9,
       description_10,
       acceptance_percentage,
-      followup_By,
       start_date,
-      id,
+      followup_by,
+      followupId,
     ];
 
     const result = await pool.query(query, values);
@@ -826,14 +903,21 @@ app.put('/update/followups/:id', async (req, res) => {
   }
 });
 
+
 //for eng followup
+
 app.put('/update/followups/eng/:id', async (req, res) => {
   const { id } = req.params;
+  const followupId = parseInt(id, 10);  // Convert to integer
 
-  // Destructure required fields from request body
+  // Check if ID is valid
+  if (isNaN(followupId)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
   const {
     student_name,
-    followup_By,   // Correct capitalization
+    followup_by,
     start_date,
     college_name,
     phone_number,
@@ -851,8 +935,8 @@ app.put('/update/followups/eng/:id', async (req, res) => {
     acceptance_percentage,
   } = req.body;
 
-  // Check if all required fields are provided
-  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined') {
+  // Check for required fields
+  if (!student_name || !college_name || !phone_number || !followup_number || typeof acceptance_percentage === 'undefined' || !start_date) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -873,9 +957,9 @@ app.put('/update/followups/eng/:id', async (req, res) => {
           description_8 = $12,
           description_9 = $13,
           description_10 = $14,
-          followup_by = $15,   -- New fields
-          start_date = $16,    -- New fields
-          acceptance_percentage = $17
+          acceptance_percentage = $15,
+          start_date = $16,
+          followup_by = $17
       WHERE id = $18
       RETURNING *;
     `;
@@ -895,16 +979,22 @@ app.put('/update/followups/eng/:id', async (req, res) => {
       description_8,
       description_9,
       description_10,
-      followup_by,
-      start_date,
       acceptance_percentage,
-      id
+      start_date,
+      followup_by,
+      followupId,
     ];
 
-    const result = await db.query(query, values);
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No follow-up found with that ID' });
+    }
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating followup:', error);
-    res.status(500).json({ error: 'Failed to update follow-up record' });
+    res.status(500).json({ error: 'Failed to update followup' });
   }
 });
+

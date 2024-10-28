@@ -3,7 +3,6 @@ import axios from 'axios';
 import './retrieveformcomsch.css'; // Ensure this file exists for styling
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
 const RetrieveFormComponent = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +15,7 @@ const RetrieveFormComponent = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/retrieve/feedback/school`, {
+      const response = await axios.get('http://localhost:5000/retrieve/feedback/school', {
         params: { field: searchField, value: searchValue }
       });
       setStudents(response.data);
@@ -51,8 +50,13 @@ const RetrieveFormComponent = () => {
               <option value="father_details">Father Name & Profession</option>
               <option value="mother_details">Mother Name & Profession</option>
               <option value="contact_number">Contact Number</option>
+              <option value="student_mobile">Student Mobile</option> {/* New field */}
               <option value="address">Address</option>
               <option value="school_name">School/College Name</option>
+              <option value="course_name">Course Name</option> {/* New field */}
+              <option value="course_year">Course Year</option> {/* New field */}
+              <option value="interested_for">Interested in Courses</option> {/* New field */}
+              <option value="payment_mode">Payment Mode</option> {/* New field */}
               <option value="interested_online">Interested in Online Course</option>
               <option value="demo_date">Demo Date</option>
               <option value="sales_ref_name">Sales Reference Name</option>
@@ -85,9 +89,14 @@ const RetrieveFormComponent = () => {
               <th>Father Name & Profession</th>
               <th>Mother Name & Profession</th>
               <th>Contact Number</th>
+              <th>Student Mobile</th> {/* New column */}
               <th>Residing Address</th>
               <th>School/College Name</th>
+              <th>Course Name</th> {/* New column */}
+              <th>Course Year</th> {/* New column */}
               <th>Interested in Online Course</th>
+              <th>Interested in Courses</th> {/* New column */}
+              <th>Payment Mode</th> {/* New column */}
               <th>Demo Date</th>
               <th>Sales Reference Name</th>
             </tr>
@@ -99,9 +108,14 @@ const RetrieveFormComponent = () => {
                 <td>{student.father_details}</td>
                 <td>{student.mother_details}</td>
                 <td>{student.contact_number}</td>
+                <td>{student.student_mobile}</td> {/* New data */}
                 <td>{student.address}</td>
                 <td>{student.school_name}</td>
+                <td>{student.course_name}</td> {/* New data */}
+                <td>{student.course_year}</td> {/* New data */}
                 <td>{student.interested_online ? 'Yes' : 'No'}</td>
+                <td>{student.interested_for}</td> {/* New data */}
+                <td>{student.payment_mode}</td> {/* New data */}
                 <td>{student.demo_date}</td>
                 <td>{student.sales_ref_name}</td>
               </tr>

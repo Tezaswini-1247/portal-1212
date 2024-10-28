@@ -4,8 +4,8 @@ import './RetrieveFollowups.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const RetrieveFollowupsEng = () => {
-  const [followupseng, setFollowups] = useState([]);
+const RetrieveFollowupseng = () => {
+  const [followups, setFollowups] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchField, setSearchField] = useState('');
@@ -17,7 +17,7 @@ const RetrieveFollowupsEng = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/retrieve-followups/eng`, {
+      const response = await axios.get('http://localhost:5000/retrieve-followups/eng', {
         params: { field: searchField, value: searchValue },
       });
       setFollowups(response.data);
@@ -36,7 +36,7 @@ const RetrieveFollowupsEng = () => {
 
   const handleEdit = (index) => {
     setEditingIndex(index);
-    const followup = followupseng[index];
+    const followup = followups[index];
     let descriptionCount = 1;
     for (let i = 2; i <= 10; i++) {
       if (followup[`description_${i}`]) descriptionCount++;
@@ -60,14 +60,14 @@ const RetrieveFollowupsEng = () => {
     };
 
     try {
-      const response = await axios.put(`${apiUrl}/update/followups/eng/${followup.id}`, updatedFollowup);
+      const response = await axios.put('http://localhost:5000/update/followups/eng/${followup.id}', updatedFollowup);
       setFollowups((prevFollowups) =>
         prevFollowups.map((f, i) => (i === index ? response.data : f))
       );
       setEditingIndex(null);
     } catch (err) {
-      console.error('Error saving follow-up:', err);
-      setError('Failed to save data: ' + err.message);
+      console.error('Error saving follow-up:', err.response ? err.response.data : err.message);
+      setError('Failed to save data: ' + (err.response ? err.response.data.error : err.message));
     }
   };
 
@@ -79,7 +79,7 @@ const RetrieveFollowupsEng = () => {
 
   return (
     <div className="retrieve-container">
-      <h2>Retrieve Calling Follow-up Records</h2>
+      <h2>Retrieve Calling Follow-up Records Eng</h2>
       <div className="search-form">
         <form onSubmit={handleSearch}>
           <div className="form-field">
@@ -104,7 +104,7 @@ const RetrieveFollowupsEng = () => {
           <div className="form-field">
             <label htmlFor="searchValue">Search Value:</label>
             <input
-              type={searchField === 'start_date' ? 'date' : 'text'}
+              type={searchField === 'start_date' ? 'date' : 'text'}  // Use date input for start_date
               id="searchValue"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -118,7 +118,7 @@ const RetrieveFollowupsEng = () => {
       {loading && <p className="loading">Loading...</p>}
       {error && <p className="error">{error}</p>}
 
-      {!loading && !error && followupseng.length > 0 && (
+      {!loading && !error && followups.length > 0 && (
         <table className="followup-table">
           <thead>
             <tr>
@@ -136,11 +136,21 @@ const RetrieveFollowupsEng = () => {
             </tr>
           </thead>
           <tbody>
-            {followupseng.map((followup, index) => (
+            {followups.map((followup, index) => (
               <tr key={followup.id}>
                 <td>{followup.student_name}</td>
                 <td>{followup.followup_by}</td>
-                <td>{followup.start_date}</td>
+                <td>
+                  {editingIndex === index ? (
+                    <input
+                      type="date"
+                      value={followup.start_date}  // Assuming start_date is in 'YYYY-MM-DD' format
+                      onChange={(e) => handleInputChange(index, 'start_date', e.target.value)}
+                    />
+                  ) : (
+                    followup.start_date
+                  )}
+                </td>
                 <td>{followup.college_name}</td>
                 <td>{followup.phone_number}</td>
 
@@ -205,4 +215,4 @@ const RetrieveFollowupsEng = () => {
   );
 };
 
-export default RetrieveFollowupsEng;
+export default RetrieveFollowupseng;

@@ -17,7 +17,7 @@ const RetrieveFollowups = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${apiUrl}/retrieve-followups`, {
+      const response = await axios.get('http://localhost:5000/retrieve-followups', {
         params: { field: searchField, value: searchValue },
       });
       setFollowups(response.data);
@@ -58,18 +58,20 @@ const RetrieveFollowups = () => {
         return acc;
       }, {}),
     };
-
+  
     try {
-      const response = await axios.put(`${apiUrl}/update/followups/${followup.id}`, updatedFollowup);
+      // Use backticks for template literals to interpolate followup.id correctly
+      const response = await axios.put(`http://localhost:5000/update/followups/${followup.id}`, updatedFollowup);
       setFollowups((prevFollowups) =>
         prevFollowups.map((f, i) => (i === index ? response.data : f))
       );
       setEditingIndex(null);
     } catch (err) {
-      console.error('Error saving follow-up:', err);
-      setError('Failed to save data: ' + err.message);
+      console.error('Error saving follow-up:', err.response ? err.response.data : err.message);
+      setError('Failed to save data: ' + (err.response ? err.response.data.error : err.message));
     }
   };
+  
 
   const handleInputChange = (index, field, value) => {
     setFollowups((prevFollowups) =>
@@ -140,7 +142,17 @@ const RetrieveFollowups = () => {
               <tr key={followup.id}>
                 <td>{followup.student_name}</td>
                 <td>{followup.followup_by}</td>
-                <td>{followup.start_date}</td>
+                <td>
+                  {editingIndex === index ? (
+                    <input
+                      type="date"
+                      value={followup.start_date}  // Assuming start_date is in 'YYYY-MM-DD' format
+                      onChange={(e) => handleInputChange(index, 'start_date', e.target.value)}
+                    />
+                  ) : (
+                    followup.start_date
+                  )}
+                </td>
                 <td>{followup.college_name}</td>
                 <td>{followup.phone_number}</td>
 

@@ -5,39 +5,46 @@ import axios from "axios";
 import Alert from "../Alert/Alert";
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
 export function FormComponent() {
   const initialValues = {
     studentName: "",
     fatherDetails: "",
     motherDetails: "",
     contactNumber: "",
+    studentMobile: "",  // New field
     address: "",
     schoolname: "",
+    courseName: "",  // New field
+    courseYear: "",  // New field
     interestedOnline: false,
     demoDate: "",
-    salesRefName: ""
+    salesRefName: "",
+    interestedFor: "",  // New field
+    paymentMode: ""  // New field
   };
-  
+
   const [showAlert, setShowAlert] = useState(false);
 
   const validationSchema = Yup.object({
-    studentName: Yup.string()
-      .min(2, "Must be at least 2 characters")
-      .required("Student Name is required"),
+    studentName: Yup.string().min(2, "Must be at least 2 characters").required("Student Name is required"),
     fatherDetails: Yup.string().required("Father's details are required"),
     motherDetails: Yup.string().required("Mother's details are required"),
     contactNumber: Yup.string().required("Contact Number is required"),
+    studentMobile: Yup.string().required("Student Mobile is required"),  // Validation for new field
     address: Yup.string().required("Address is required"),
     schoolname: Yup.string().required("School Name is required"),
+    courseName: Yup.string().required("Course Name is required"),  // Validation for new field
+    courseYear: Yup.string().required("Course Year is required"),  // Validation for new field
     demoDate: Yup.date().required("Demo Date is required").nullable(),
     salesRefName: Yup.string().required("Sales Reference Name is required"),
     interestedOnline: Yup.boolean(),
+    interestedFor: Yup.string().required("Select a course of interest"),  // Validation for new field
+    paymentMode: Yup.string().required("Select a payment mode")  // Validation for new field
   });
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
-      const response = await axios.post(`${apiUrl}/feedback/school`, values);
+      const response = await axios.post('http://localhost:5000/feedback/school', values);
       console.log("Form submitted successfully", response.data);
       setStatus("Form submitted successfully!");
       setShowAlert(true);
@@ -71,129 +78,227 @@ export function FormComponent() {
         >
           {({ isSubmitting, status }) => (
             <Form>
-              <div className="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row gap-1">
-                    <div className="w-full">
-                      <Field
-                        name="studentName"
-                        type="text"
-                        className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                        placeholder="Student Name"
-                      />
-                      <ErrorMessage
-                        name="studentName"
-                        component="div"
-                        className="error-message text-[red] text-sm ms-2"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="fatherDetails"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Father Name & Profession"
-                    />
-                    <ErrorMessage
-                      name="fatherDetails"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="motherDetails"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Mother Name & Profession"
-                    />
-                    <ErrorMessage
-                      name="motherDetails"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="contactNumber"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Parent Contact Number"
-                    />
-                    <ErrorMessage
-                      name="contactNumber"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="address"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Residing Address"
-                    />
-                    <ErrorMessage
-                      name="address"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="schoolname"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Enter School or College Name"
-                    />
-                    <ErrorMessage
-                      name="schoolname"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      as="select"
-                      name="interestedOnline"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                    >
-                      <option value="">Interested in Online Course?</option>
-                      <option value={true}>Yes</option>
-                      <option value={false}>No</option>
-                    </Field>
-                    <ErrorMessage
-                      name="interestedOnline"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="demoDate"
-                      type="date"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                    />
-                    <ErrorMessage
-                      name="demoDate"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Field
-                      name="salesRefName"
-                      type="text"
-                      className="mt-3 py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Sales Reference Name"
-                    />
-                    <ErrorMessage
-                      name="salesRefName"
-                      component="div"
-                      className="error-message text-[red] text-sm ms-2"
-                    />
-                  </div>
+              <div className="space-y-4">
+                {/* Student Name */}
+                <div className="w-full">
+                  <Field
+                    name="studentName"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Student Name"
+                  />
+                  <ErrorMessage
+                    name="studentName"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Father's Details */}
+                <div className="w-full">
+                  <Field
+                    name="fatherDetails"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Father Name & Profession"
+                  />
+                  <ErrorMessage
+                    name="fatherDetails"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Mother's Details */}
+                <div className="w-full">
+                  <Field
+                    name="motherDetails"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Mother Name & Profession"
+                  />
+                  <ErrorMessage
+                    name="motherDetails"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Parent Contact Number */}
+                <div className="w-full">
+                  <Field
+                    name="contactNumber"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Parent Contact Number"
+                  />
+                  <ErrorMessage
+                    name="contactNumber"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Student Mobile (New Field) */}
+                <div className="w-full">
+                  <Field
+                    name="studentMobile"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Student Mobile Number"
+                  />
+                  <ErrorMessage
+                    name="studentMobile"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Address */}
+                <div className="w-full">
+                  <Field
+                    name="address"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Residing Address"
+                  />
+                  <ErrorMessage
+                    name="address"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+                {/* Demo Date */}
+                <div className="w-full">
+                  <Field
+                    name="demoDate"
+                    type="date"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                  />
+                  <ErrorMessage
+                    name="demoDate"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* School Name */}
+                <div className="w-full">
+                  <Field
+                    name="schoolname"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Enter School or College Name"
+                  />
+                  <ErrorMessage
+                    name="schoolname"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Course Name (New Field) */}
+                <div className="w-full">
+                  <Field
+                    name="courseName"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Educational Qualification - Course Name"
+                  />
+                  <ErrorMessage
+                    name="courseName"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Course Year (New Field) */}
+                <div className="w-full">
+                  <Field
+                    name="courseYear"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Year of Course"
+                  />
+                  <ErrorMessage
+                    name="courseYear"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Interested in Online Course */}
+                <div className="w-full">
+                  <Field
+                    as="select"
+                    name="interestedOnline"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                  >
+                    <option value="">Interested in Online Course?</option>
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </Field>
+                  <ErrorMessage
+                    name="interestedOnline"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                
+
+                {/* Sales Reference Name */}
+                <div className="w-full">
+                  <Field
+                    name="salesRefName"
+                    type="text"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                    placeholder="Sales Reference Name"
+                  />
+                  <ErrorMessage
+                    name="salesRefName"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Interested in Courses (New Field) */}
+                <div className="w-full">
+                  <Field
+                    as="select"
+                    name="interestedFor"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                  >
+                    <option value="">Interested For</option>
+                    <option value="AI">AI</option>
+                    <option value="Python">Python</option>
+                    <option value="Cloud computing">Cloud computing</option>
+                    <option value="Linux">Linux</option>
+                    <option value="All">All</option>
+                  </Field>
+                  <ErrorMessage
+                    name="interestedFor"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
+                </div>
+
+                {/* Payment Mode (New Field) */}
+                <div className="w-full">
+                  <Field
+                    as="select"
+                    name="paymentMode"
+                    className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg"
+                  >
+                    <option value="">Payment Mode</option>
+                    <option value="Single Payment">Single Payment</option>
+                    <option value="Installments">Installments</option>
+                  </Field>
+                  <ErrorMessage
+                    name="paymentMode"
+                    component="div"
+                    className="error-message text-[red] text-sm"
+                  />
                 </div>
               </div>
 
@@ -201,17 +306,13 @@ export function FormComponent() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700"
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </button>
               </div>
 
-              {status && (
-                <div className="submission-status text-black text-center">
-                  {status}
-                </div>
-              )}
+              {status && <div className="submission-status text-black text-center">{status}</div>}
             </Form>
           )}
         </Formik>
