@@ -18,7 +18,7 @@ const RetrieveForm = () => {
     setData([]);
 
     try {
-      const response = await axios.get('http://localhost:5000/api/institutions/retrieve', {
+      const response = await axios.get(`${apiUrl}/api/institutions/retrieve`, {
         params: { searchField, searchValue }
       });
 

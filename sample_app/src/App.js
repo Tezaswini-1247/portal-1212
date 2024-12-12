@@ -39,6 +39,7 @@ import PaymentFormENG from "./components/paymentform-eng/PaymentForm-eng";
 import Pages from "./components/pagescomponent/pages";
 import RetrieveAllForm from "./components/integratedRetrieve/integratedRetrieveForm";
 import Contact from "./components/contactcomponent/contact";
+import CategoryForm from "./components/Categoryaibzr/CategoryForm";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -865,6 +866,60 @@ function App() {
                             </div>
                           </div>
                         </li>
+
+                        {/* Category for AI4Bazaar */}
+                                                
+                        <li className="mb-[0.1rem]">
+                          <div className="accordion" id="accordionExample">
+                            <div className="accordion-item border-0">
+                              <h2
+                                className="accordion-header"
+                                id="headingFive"
+                              >
+                                <button
+                                  className="accordion-button text-sm px-2 py-2 hover:bg-white bg-white focus:bg-white no-outline"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target="#collapseFive"
+                                  aria-expanded="false"
+                                  aria-controls="collapseFive"
+                                >
+                                  <i class="bi bi-person-fill-down pe-1"></i>{" "}
+                                  AI4Bazaar Categories
+                                </button>
+                              </h2>
+                              <div
+                                id="collapseFive"
+                                className="accordion-collapse collapse"
+                                aria-labelledby="headingFive"
+                                data-bs-parent="#accordionExample"
+                              >
+                                <div className="accordion-body text-black p-0">
+                                  <ul className="list-group list-group-flush text-sm">
+                                    <li className="list-group-item d-flex">
+                                      <Link
+                                        className="dropdown-item"
+                                        to="/Category_From"
+                                      >
+                                        <p
+                                          className="p-0"
+                                          style={{ width: "100%" }}
+                                          data-bs-toggle="offcanvas"
+                                          data-bs-target="#offcanvasExample"
+                                          onClick={toggleOffCanvas}
+                                          aria-controls="offcanvasExample"
+                                        >
+                                          <i className="bi bi-journal-medical pe-2"></i>{" "}
+                                          Category
+                                        </p>
+                                      </Link>
+                                    </li> 
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
                       </ul>
                     </nav>
                   </div>
@@ -969,7 +1024,12 @@ function App() {
               path="/tutorins-retrive-form"
               element={isLoggedIn ? <TutorRetrieveForm /> : <Navigate to="/" />}
             />
-           
+            <Route
+              path="/Category_From"
+              element={
+                isLoggedIn ? <CategoryForm /> : <Navigate to="/" />
+              }
+            />
             
             <Route
               path="/followups-all-forms"
@@ -977,6 +1037,7 @@ function App() {
                 isLoggedIn ? <FollowupsAllForm /> : <Navigate to="/" />
               }
             />
+
             
             <Route
               path="/retrive-followups"
@@ -1049,6 +1110,7 @@ function App() {
               path="/contact"
               element={isLoggedIn ? <Contact /> : <Navigate to="/" />}
             />
+            
           </Routes>
         </section>
       </div>

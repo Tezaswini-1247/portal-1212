@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Pool } = require("pg");
+
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
@@ -21,9 +22,9 @@ app.use(cors());
 
 
 // PostgreSQL Pool setup
-const pool = new Pool({
+const pool1 = new Pool({
   user: "visys_dev",
-  host: "52.66.196.233", // Or your database host
+  host: "13.232.172.19", // Or your database host
   database: "devdb",
   password: "dev@123",
   port: 5432, // Default PostgreSQL port
@@ -31,14 +32,24 @@ const pool = new Pool({
 //////////////////////
 
 
-// Helper function to query the database
-const queryDatabase = async (queryText, res) => {
+// PostgreSQL Pool setup for second database
+const pool2 = new Pool({
+  user: "admin",
+  host: "192.168.20.12",
+  database: "ai4bzrdb",
+  password: "ai4bzrdb0987",
+  port: 5432,
+});
+
+
+// Helper function to query a specific database
+const queryDatabase = async (pool, queryText, res) => {
   try {
     const result = await pool.query(queryText);
     res.json(result.rows);
   } catch (error) {
-    console.error('Error executing query', error);
-    res.status(500).json({ error: 'Database query error' });
+    console.error("Error executing query", error);
+    res.status(500).json({ error: "Database query error" });
   }
 };
 //////////////////////////////////////////
@@ -48,7 +59,7 @@ const queryDatabase = async (queryText, res) => {
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await pool1.query('SELECT * FROM users WHERE email = $1', [email]);
 
 if (result.rows.length === 0) {
   return res.json({ success: false, message: 'User not found.' });
@@ -90,7 +101,7 @@ app.post('/api/institutions', upload.single('photo'), async (req, res) => {
 
   try {
     // Insert the form data, including the description and photoPath, into the database
-    await pool.query(
+    await pool1.query(
       `INSERT INTO institutions (
         institution_name, 
         contact_person, 
@@ -131,7 +142,7 @@ app.get('/api/institutions/retrieve', async (req, res) => {
     }
 
     const query = `SELECT * FROM institutions WHERE ${searchField} ILIKE $1`;
-    const result = await pool.query(query, [`%${searchValue}%`]);
+    const result = await pool1.query(query, [`%${searchValue}%`]);
 
     if (result.rows.length === 0) {
       res.status(404).send('No matching records found.');
@@ -164,7 +175,7 @@ app.post('/api/business-opportunity', async (req, res) => {
   } = req.body;
 
   try {
-    await pool.query(
+    await pool1.query(
       'INSERT INTO business_opportunity (person_name, email, phone_number, address, agreed_incentive, leads_generated, total_incentive_on_date, total_incentive_so_far) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
       [personName, email, phoneNumber, address, agreedIncentive, leadsGenerated, totalIncentiveOnDate, totalIncentiveSoFar]
     );
@@ -199,7 +210,7 @@ app.get('/api/business-opportunities', async (req, res) => {
       queryParams.push(`%${searchValue}%`);
     }
 
-    const result = await pool.query(query, queryParams);
+    const result = await pool1.query(query, queryParams);
 
     if (result.rows.length === 0) {
       res.status(404).send('No matching records found.');
@@ -227,7 +238,7 @@ app.post('/api/servers', async (req, res) => {
 
   try {
       // Insert new server data into the database
-      await pool.query(
+      await pool1.query(
           'INSERT INTO servers (server_id, server_name, active, student_name, student_email) VALUES ($1, $2, $3, $4, $5)',
           [serverId, serverName, active, studentName, studentEmail]
       );
@@ -242,7 +253,7 @@ app.post('/api/servers', async (req, res) => {
 app.get('/api/servers/:serverId', async (req, res) => {
   const { serverId } = req.params;
   try {
-      const result = await pool.query('SELECT * FROM servers WHERE server_id = $1', [serverId]);
+      const result = await pool1.query('SELECT * FROM servers WHERE server_id = $1', [serverId]);
       if (result.rows.length === 0) {
           return res.status(404).send('Server not found');
       }
@@ -294,7 +305,7 @@ app.post("/api/student", async (req, res) => {
   console.log(req.body);  // Log the incoming form data
   
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       `INSERT INTO student_attendance 
         (student_name, batch_id, location, country, present_absent, tutor_name, date, class_date)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -327,7 +338,7 @@ app.post("/api/student", async (req, res) => {
 //student Retrieve
 app.get("/api/students", async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       `SELECT student_name, batch_id, location, country, present_absent, tutor_name, date, class_date FROM student_attendance`
     );
 
@@ -353,7 +364,7 @@ app.post("/api/batches", async (req, res) => {
   const { batchId, selectSubject, nextClassDate, studentName, studentEmail } = req.body;
 
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       "INSERT INTO batches (batch_id, select_subject, next_class_date, student_name, student_email) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [batchId, selectSubject, nextClassDate, studentName, studentEmail]
     );
@@ -367,7 +378,7 @@ app.post("/api/batches", async (req, res) => {
 //batch Retrieve
 app.get("/api/batches", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM batches");
+    const result = await pool1.query("SELECT * FROM batches");
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching batch data:", error);
@@ -388,7 +399,7 @@ app.post("/submit", async (req, res) => {
   }
 
   try {
-    await pool.query(
+    await pool1.query(
       "INSERT INTO tutor_form (batchId, tutorDetails, countryLocation, tutorId, phone, startDate) VALUES ($1,$2, $3, $4, $5, $6)",
       [batchId,tutorDetails, countryLocation, tutorId, phone, startDate]
     );
@@ -411,7 +422,7 @@ app.get('/retrieve/tutor', async (req, res) => {
   }
 
   try {
-    const result = await pool.query(`SELECT * FROM tutor_form WHERE ${field} = $1`, [value]);
+    const result = await pool1.query(`SELECT * FROM tutor_form WHERE ${field} = $1`, [value]);
     if (result.rows.length > 0) {
       res.json(result.rows);
     } else {
@@ -456,7 +467,7 @@ app.post('/api/followups/school', async (req, res) => {
   const { studentName, parentName, email, phoneNumber, collegeName, salesRefName, startDate } = req.body;
   
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       `INSERT INTO followups (student_name, parent_name, email, phone_number, college_name, sales_reference_name, start_date) 
        VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *`,
       [studentName, parentName, email, phoneNumber, collegeName, salesRefName, startDate]
@@ -478,7 +489,17 @@ app.get('/retrieve-followups', async (req, res) => {
   }
 
   try {
-    const validFields = ['student_name', 'parent_name', 'email', 'phone_number', 'college_name', 'sales_reference_name', 'start_date'];
+    const validFields = [
+      'student_name',
+      'parent_name',
+      'email',
+      'phone_number',
+      'college_name',
+      'sales_reference_name',
+      'start_date',
+      'description' // Allow searching by description fields
+    ];
+
     if (!validFields.includes(field)) {
       return res.status(400).send('Invalid search field.');
     }
@@ -488,19 +509,24 @@ app.get('/retrieve-followups', async (req, res) => {
 
     if (field === 'start_date') {
       // Special handling for date field
-      query = `SELECT * FROM followups WHERE ${field} = $1`;  // Exact match for date
-      queryParams = [value];  // Ensure value is in date format YYYY-MM-DD
+      query = `SELECT * FROM followups WHERE ${field} = $1`; // Exact match for date
+      queryParams = [value]; // Ensure value is in date format YYYY-MM-DD
+    } else if (field === 'description') {
+      // Check across all description fields
+      const descriptionConditions = Array.from({ length: 10 }, (_, i) => `description_${i + 1} ILIKE $1`).join(' OR ');
+      query = `SELECT * FROM followups WHERE ${descriptionConditions}`;
+      queryParams = [`%${value}%`];
     } else {
       // For text-based fields use ILIKE for case-insensitive search
       query = `SELECT * FROM followups WHERE ${field} ILIKE $1`;
       queryParams = [`%${value}%`];
     }
 
-    const result = await pool.query(query, queryParams);
+    const result = await pool1.query(query, queryParams);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
-    } 
+    }
 
     res.json(result.rows);
   } catch (error) {
@@ -508,6 +534,7 @@ app.get('/retrieve-followups', async (req, res) => {
     res.status(500).send('Server error while retrieving data.');
   }
 });
+
 
 /////followups update
 app.put('/update/followups/:id', async (req, res) => {
@@ -587,7 +614,7 @@ app.put('/update/followups/:id', async (req, res) => {
       followupId,
     ];
 
-    const result = await pool.query(query, values);
+    const result = await pool1.query(query, values);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No follow-up found with that ID' });
@@ -601,7 +628,7 @@ app.put('/update/followups/:id', async (req, res) => {
 });
 // Function to insert data into the database
 async function insertDataIntoDatabase(data) {
-  const client = await pool.connect();
+  const client = await pool1.connect();
 
   try {
     await client.query('BEGIN'); // Start transaction
@@ -663,13 +690,15 @@ app.post("/api/followups/bulk", upload.single("file"), async (req, res) => {
 //////payment update and retrieve//////
 ////payment update
 app.post('/api/payment/school', async (req, res) => {
-  const { studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone } = req.body;
-  
+  const { studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone, paidTillNow } = req.body;
+
+  console.log('Received data:', req.body); // Add this line for debugging
+
   try {
-    const result = await pool.query(
-      `INSERT INTO payments (student_name, phone_number, payment_type, installments_required, installments_done) 
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone]
+    const result = await pool1.query(
+      `INSERT INTO payments (student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now) 
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone, paidTillNow]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -678,8 +707,11 @@ app.post('/api/payment/school', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error inserting data' });
   }
 });
+
+
 //////retrieve payment
 // retrieve payments school
+// Retrieve payments school
 app.get('/retrieve-payments/school', async (req, res) => {
   const { field, value } = req.query;
 
@@ -688,13 +720,13 @@ app.get('/retrieve-payments/school', async (req, res) => {
   }
 
   try {
-    const validFields = ['student_name', 'phone_number', 'payment_type', 'installments_required', 'installments_done'];
+    const validFields = ['student_name', 'phone_number', 'payment_type', 'installments_required', 'installments_done', 'paid_till_now'];
     if (!validFields.includes(field)) {
       return res.status(400).send('Invalid search field.');
     }
 
     const query = `SELECT * FROM payments WHERE ${field} ILIKE $1`;
-    const result = await pool.query(query, [`%${value}%`]);
+    const result = await pool1.query(query, [`%${value}%`]);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
@@ -706,6 +738,42 @@ app.get('/retrieve-payments/school', async (req, res) => {
     res.status(500).send('Server error while retrieving data.');
   }
 });
+
+// Update payment record by ID
+app.put('/update-payment/:id', async (req, res) => {
+  const { id } = req.params;
+  const { student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now } = req.body;
+
+  if (!id) {
+    return res.status(400).send('Payment ID is required.');
+  }
+
+  try {
+    const query = `
+      UPDATE payments 
+      SET student_name = $1, 
+          phone_number = $2, 
+          payment_type = $3, 
+          installments_required = $4, 
+          installments_done = $5,
+          paid_till_now = $6
+      WHERE id = $7
+      RETURNING *;
+    `;
+    const values = [student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now, id];
+    const result = await pool1.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).send('Payment record not found.');
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating payment:', error);
+    res.status(500).send('Server error while updating payment.');
+  }
+});
+
 
 // Retrieve data from the institutions table
 app.get('/api/all/followups/school', async (req, res) => {
@@ -729,7 +797,7 @@ app.post('/api/followups/eng', async (req, res) => {
   const { studentName, parentName, email, phoneNumber, collegeName, salesRefName, startDate } = req.body;
   
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       `INSERT INTO followups_eng (student_name, parent_name, email, phone_number, college_name, sales_reference_name, start_date) 
        VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *`,
       [studentName, parentName, email, phoneNumber, collegeName, salesRefName, startDate]
@@ -769,7 +837,7 @@ app.get('/retrieve-followups/eng', async (req, res) => {
       queryParams = [`%${value}%`];
     }
 
-    const result = await pool.query(query, queryParams);
+    const result = await pool1.query(query, queryParams);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
@@ -860,7 +928,7 @@ app.put('/update/eng/followups/:id', async (req, res) => {
       followupId,
     ];
 
-    const result = await pool.query(query, values);
+    const result = await pool1.query(query, values);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No follow-up found with that ID' });
@@ -874,7 +942,7 @@ app.put('/update/eng/followups/:id', async (req, res) => {
 });
 // Function to insert data into the database
 async function insertDataIntoDatabase(data) {
-  const client = await pool.connect();
+  const client = await pool1.connect();
 
   try {
     await client.query('BEGIN'); // Start transaction
@@ -929,13 +997,15 @@ app.post("/api/followups/bulk/eng", upload.single("file"), async (req, res) => {
 // payments-eng
 
 app.post('/api/payment/eng', async (req, res) => {
-  const { studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone } = req.body;
-  
+  const { studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone, paidTillNow } = req.body;
+
+  console.log('Received data:', req.body); // Add this line for debugging
+
   try {
-    const result = await pool.query(
-      `INSERT INTO payments_engineering (student_name, phone_number, payment_type, installments_required, installments_done) 
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone]
+    const result = await pool1.query(
+      `INSERT INTO payments_engineering (student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now) 
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [studentName, phoneNumber, paymentType, installmentsRequired, installmentsDone, paidTillNow]
     );
 
     res.json({ success: true, data: result.rows[0] });
@@ -945,7 +1015,9 @@ app.post('/api/payment/eng', async (req, res) => {
   }
 });
 
+
 // retrieve payments eng
+// Retrieve payments school
 app.get('/retrieve-payments/eng', async (req, res) => {
   const { field, value } = req.query;
 
@@ -954,13 +1026,13 @@ app.get('/retrieve-payments/eng', async (req, res) => {
   }
 
   try {
-    const validFields = ['student_name', 'phone_number', 'payment_type', 'installments_required', 'installments_done'];
+    const validFields = ['student_name', 'phone_number', 'payment_type', 'installments_required', 'installments_done', 'paid_till_now'];
     if (!validFields.includes(field)) {
       return res.status(400).send('Invalid search field.');
     }
 
     const query = `SELECT * FROM payments_engineering WHERE ${field} ILIKE $1`;
-    const result = await pool.query(query, [`%${value}%`]);
+    const result = await pool1.query(query, [`%${value}%`]);
 
     if (result.rows.length === 0) {
       return res.status(404).send('No matching records found.');
@@ -970,6 +1042,45 @@ app.get('/retrieve-payments/eng', async (req, res) => {
   } catch (error) {
     console.error('Error retrieving data:', error);
     res.status(500).send('Server error while retrieving data.');
+  }
+});
+
+// Update payment record by ID, including the new "paid_till_now" field
+app.put('/update-payment/eng/:id', async (req, res) => {
+  const { id } = req.params;
+  const { student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now } = req.body;
+
+  // Validate the required fields
+  if (!id) {
+    return res.status(400).send('Payment ID is required.');
+  }
+
+  try {
+    // Construct the SQL query for updating the payment record, including the "paid_till_now" field
+    const query = `
+      UPDATE payments_engineering
+      SET student_name = $1, 
+          phone_number = $2, 
+          payment_type = $3, 
+          installments_required = $4, 
+          installments_done = $5,
+          paid_till_now = $6
+      WHERE id = $7
+      RETURNING *;
+    `;
+    const values = [student_name, phone_number, payment_type, installments_required, installments_done, paid_till_now, id];
+    const result = await pool1.query(query, values);
+
+    // Check if any rows were updated
+    if (result.rowCount === 0) {
+      return res.status(404).send('Payment record not found.');
+    }
+
+    // Return the updated payment record
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating payment:', error);
+    res.status(500).send('Server error while updating payment.');
   }
 });
 
@@ -986,6 +1097,29 @@ app.get('/api/all/payments/school/eng', async (req, res) => {
 });
 
 //////////
+
+// //////Category///////
+
+///insert new category////
+app.post("/api/categories", async (req, res) => {
+  const { categoryId, description, suggestion } = req.body;
+
+  try {
+    const result = await pool2.query(
+      `
+      INSERT INTO s_ai4bzr.categories (category_id, description, suggestion)
+      VALUES ($1, $2, $3)
+      RETURNING serial_number;
+      `,
+      [categoryId, description, suggestion]
+    );
+    res.status(201).json(result.rows[0]); // Respond with the inserted data
+  } catch (err) {
+    console.error("Error inserting category:", err);
+    res.status(500).json({ error: "Error inserting category" });
+  }
+});
+
 
 
 

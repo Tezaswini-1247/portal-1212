@@ -44,7 +44,7 @@ const BatchLoginForm = () => {
       // Log the values to check what is being sent
       console.log("Form values:", updatedValues);
   
-      const response = await axios.post('http://localhost:5000/api/batches', updatedValues);
+      const response = await axios.post(`${apiUrl}/api/batches`, updatedValues);
       console.log('Form submitted successfully:', response.data);
       setStatus('Form submitted successfully!');
       setShowAlert(true);

@@ -5,7 +5,6 @@ import axios from "axios";
 import Alert from "../Alert/Alert"; // Import the Alert component if needed
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
 const PaymentForm = () => {
   const initialValues = {
     studentName: "",
@@ -13,15 +12,14 @@ const PaymentForm = () => {
     paymentType: "single",
     installmentsRequired: "1",
     installmentsDone: "1",
+    paidTillNow: "", // Add initial value for "Paid Till Now"
   };
 
   const [showAlert, setShowAlert] = useState(false);
 
-  
-
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/payment/school', values);
+      const response = await axios.post(`${apiUrl}/api/payment/school`, values);
       console.log("Payment information submitted", response.data);
       setStatus("Payment information submitted successfully!");
       setShowAlert(true);
@@ -48,7 +46,6 @@ const PaymentForm = () => {
         </div>
         <Formik
           initialValues={initialValues}
-          // validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, status, values }) => (
@@ -73,6 +70,15 @@ const PaymentForm = () => {
                     />
                     <ErrorMessage name="phoneNumber" component="div" className="error-message text-[red] text-sm ms-2" />
                   </div>
+                  <div className="w-full">
+                        <Field
+                          name="paidTillNow"
+                          type="number"
+                          className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Paid Till Now"
+                        />
+                        <ErrorMessage name="paidTillNow" component="div" className="error-message text-[red] text-sm ms-2" />
+                      </div>
                   <div className="w-full">
                     <Field
                       as="select"
@@ -105,6 +111,7 @@ const PaymentForm = () => {
                         />
                         <ErrorMessage name="installmentsDone" component="div" className="error-message text-[red] text-sm ms-2" />
                       </div>
+                      
                     </>
                   )}
                 </div>

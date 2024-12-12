@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './allfollowups.css'; // Make sure to include the CSS file
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const FollowupsAllForm = () => {
   const [loading, setLoading] = useState(false);
@@ -21,11 +22,11 @@ const FollowupsAllForm = () => {
   };
 
   const retrieveAllFollowupsData = () => {
-    fetchData('http://localhost:5000/api/all/followups/school');
+    fetchData(`${apiUrl}/api/all/followups/school`);
   };
 
   const retrieveallPaymentsData = () => {
-    fetchData('http://localhost:5000/api/all/payments/school');
+    fetchData(`${apiUrl}/api/all/payments/school`);
   };
   
   

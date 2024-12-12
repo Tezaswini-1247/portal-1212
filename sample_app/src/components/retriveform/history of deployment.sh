@@ -356,7 +356,7 @@
   356  cd src/components/
   357  ls
   358  view LoginForm.js
-  359  curl -v X GET http://localhost:5000/api/login
+  359  curl -v X GET ${apiUrl}/api/login
   360  pwd
   361  cd ../..
   362  pwd

@@ -5,23 +5,21 @@ import axios from "axios";
 import Alert from "../Alert/Alert"; // Import the Alert component if needed
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
-const PaymentForm = () => {
+const PaymentFormeng = () => {
   const initialValues = {
     studentName: "",
     phoneNumber: "",
     paymentType: "single",
     installmentsRequired: "1",
-    installmentsDone: "0",
+    installmentsDone: "1",
+    paidTillNow: "", // Add initial value for "Paid Till Now"
   };
 
   const [showAlert, setShowAlert] = useState(false);
 
-  
-
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/payment/eng', values);
+      const response = await axios.post(`${apiUrl}/api/payment/eng`, values);
       console.log("Payment information submitted", response.data);
       setStatus("Payment information submitted successfully!");
       setShowAlert(true);
@@ -43,12 +41,11 @@ const PaymentForm = () => {
     <div className="max-w-xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
       <div className="bg-white rounded-xl shadow p-4 sm:p-7">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Payment Form Engineering</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Payment Form</h2>
           <p className="text-sm text-gray-600">Enter your payment details here!</p>
         </div>
         <Formik
           initialValues={initialValues}
-          // validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, status, values }) => (
@@ -73,6 +70,15 @@ const PaymentForm = () => {
                     />
                     <ErrorMessage name="phoneNumber" component="div" className="error-message text-[red] text-sm ms-2" />
                   </div>
+                  <div className="w-full">
+                        <Field
+                          name="paidTillNow"
+                          type="number"
+                          className="mt-3 py-2 px-3 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Paid Till Now"
+                        />
+                        <ErrorMessage name="paidTillNow" component="div" className="error-message text-[red] text-sm ms-2" />
+                      </div>
                   <div className="w-full">
                     <Field
                       as="select"
@@ -105,6 +111,7 @@ const PaymentForm = () => {
                         />
                         <ErrorMessage name="installmentsDone" component="div" className="error-message text-[red] text-sm ms-2" />
                       </div>
+                      
                     </>
                   )}
                 </div>
@@ -132,4 +139,4 @@ const PaymentForm = () => {
   );
 };
 
-export default PaymentForm;
+export default PaymentFormeng;

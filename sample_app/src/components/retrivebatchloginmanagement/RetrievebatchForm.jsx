@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 function RetrieveBatchLoginForm() {
@@ -16,7 +17,7 @@ function RetrieveBatchLoginForm() {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get("http://localhost:5000/api/batches");
+      const response = await axios.get(`${apiUrl}/api/batches`);
       if (Array.isArray(response.data)) {
         setBatches(response.data);
       } else {

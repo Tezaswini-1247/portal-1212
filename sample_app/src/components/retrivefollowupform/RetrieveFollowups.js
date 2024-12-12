@@ -17,7 +17,7 @@ const RetrieveFollowups = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get('http://localhost:5000/retrieve-followups', {
+      const response = await axios.get(`${apiUrl}/retrieve-followups`, {
         params: { field: searchField, value: searchValue },
       });
       setFollowups(response.data);
@@ -67,7 +67,7 @@ const RetrieveFollowups = () => {
         updatedFollowup[`description_${i}`] = followup[`description_${i}`] || '';
       }
 
-      const response = await axios.put(`http://localhost:5000/update/followups/${followup.id}`, updatedFollowup);
+      const response = await axios.put(`${apiUrl}/update/followups/${followup.id}`, updatedFollowup);
       setFollowups((prev) => prev.map((f, i) => (i === index ? response.data : f)));
       setEditingIndex(null);
     } catch (err) {
@@ -103,6 +103,7 @@ const RetrieveFollowups = () => {
                 <option value="college_name">College/School Name</option>
                 <option value="sales_reference_name">Sales Reference Name</option>
                 <option value="start_date">Date of Starting Followup</option>
+                <option value="description">search by Followup</option>
               </select>
             </div>
             <div className="form-field">

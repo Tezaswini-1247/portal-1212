@@ -34,7 +34,7 @@ const FollowupFormeng = () => {
 
   const handleSubmit = async (values, { resetForm, setSubmitting, setStatus }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/followups/eng', values);
+      const response = await axios.post(`${apiUrl}/api/followups/eng`, values);
       if (response.data.success) {
         setStatus("Submitted student information successfully!");
         setShowAlert(true);
@@ -65,7 +65,7 @@ const FollowupFormeng = () => {
     formData.append("file", excelFile); // Ensure the key matches what the server expects
 
     try {
-      const response = await axios.post('http://localhost:5000/api/followups/bulk/eng', formData, {
+      const response = await axios.post(`${apiUrl}/api/followups/bulk/eng`, formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Important for file uploads
         },

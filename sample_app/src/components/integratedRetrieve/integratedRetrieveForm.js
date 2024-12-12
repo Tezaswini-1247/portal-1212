@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './RetrieveAllForm.css'; // Make sure to include the CSS file
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const RetrieveAllForm = () => {
   const [loading, setLoading] = useState(false);
@@ -21,15 +22,15 @@ const RetrieveAllForm = () => {
   };
 
   const retrieveInstitutionData = () => {
-    fetchData('http://localhost:5000/api/institution');
+    fetchData(`${apiUrl}/api/institution`);
   };
 
   const retrieveServerData = () => {
-    fetchData('http://localhost:5000/api/server');
+    fetchData(`${apiUrl}/api/server`);
   };
 
   const retrieveBusinessData = () => {
-    fetchData('http://localhost:5000/api/business');
+    fetchData(`${apiUrl}/api/business`);
   };
 
   const renderTableData = () => {

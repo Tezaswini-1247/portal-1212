@@ -54,7 +54,7 @@ const TutorRetrieveForm = () => {
     try {
       // Make a GET request with query parameters field and value
       const response = await fetch(
-        `http://localhost:5000/retrieve/tutor?field=${encodeURIComponent(field)}&value=${encodeURIComponent(value)}`
+        `${apiUrl}/retrieve/tutor?field=${encodeURIComponent(field)}&value=${encodeURIComponent(value)}`
       );
   
       // Check if the response is successful

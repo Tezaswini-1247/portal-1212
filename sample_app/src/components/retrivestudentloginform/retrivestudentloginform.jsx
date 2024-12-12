@@ -18,7 +18,7 @@ function RetrieveStudentForm() {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get('http://localhost:5000/api/students');
+      const response = await axios.get(`${apiUrl}/api/students`);
       setStudents(response.data.data);
     } catch (err) {
       console.error("Error fetching student data:", err);

@@ -38,7 +38,7 @@ export function UpdateServerForm() {
     console.log(values);
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/servers',
+        `${apiUrl}/api/servers`,
         values
       );
       console.log("Form submitted successfully", response.data);
